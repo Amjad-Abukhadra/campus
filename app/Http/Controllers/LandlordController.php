@@ -1,0 +1,131 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Apartment;
+use App\Models\Application;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+
+class LandlordController extends Controller
+{
+    public function createPost()
+    {
+        return view('landlord.post');
+    }
+    public function dashboard()
+    {
+        $landlord = Auth::user();
+
+        $apartments = $landlord->apartments()->with('applications')->get();
+
+        $totalApartments = $apartments->count();
+        $rentedApartments = $apartments->filter(fn($a) => $a->applications()->where('status', 'accepted')->exists())->count();
+        $availableApartments = $totalApartments - $rentedApartments;
+        $totalRent = $apartments->sum(fn($a) => $a->applications()->where('status', 'accepted')->exists() ? $a->rent : 0);
+
+        return view('landlord.dashboard', compact(
+            'apartments',
+            'totalApartments',
+            'rentedApartments',
+            'availableApartments',
+            'totalRent'
+        ));
+    }
+
+    public function applications()
+    {
+        $landlord = Auth::user();
+
+        $apartments = $landlord->apartments()->pluck('id');
+
+        $applications = Application::whereIn('apartment_id', $apartments)
+            ->with(['student', 'apartment'])
+            ->get();
+
+        return view('landlord.applications', compact('applications'));
+    }
+    public function updateApplication(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|in:pending,accepted,rejected',
+        ]);
+
+        $application = Application::findOrFail($id);
+        $application->status = $request->status;
+        $application->save();
+
+        return redirect()->back()->with('success', 'Application status updated successfully!');
+    }
+
+
+    public function profile()
+    {
+        $landlord = auth()->user();
+        $landlord->load('apartments');
+
+        return view('landlord.profile', compact('landlord'));
+    }
+    public function updateProfile(Request $request)
+    {
+        $landlord = Auth::user();
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'phone_number' => 'required|string|max:20',
+            'image' => 'nullable|image|max:2048',
+        ]);
+
+        // Update name and phone
+        $landlord->name = $request->name;
+        $landlord->phone_number = $request->phone_number;
+
+        // If a new image is uploaded
+        if ($request->hasFile('image')) {
+            // Delete old image (optional)
+            if ($landlord->image && Storage::disk('public')->exists('apartments/' . $landlord->image)) {
+                Storage::disk('public')->delete('apartments/' . $landlord->image);
+            }
+
+            // Store new image in "storage/app/public/apartments/"
+            $path = $request->file('image')->store('apartments', 'public');
+            $landlord->image = basename($path);
+        }
+
+        $landlord->save();
+
+        return back()->with('success', 'Profile updated successfully!');
+    }
+    public function storePost(Request $request)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'location' => 'required|string|max:255',
+            'rent' => 'required|numeric',
+            'description' => 'required|string',
+            'image' => 'nullable|image|max:2048',
+        ]);
+
+        $landlord = Auth::user();
+
+        $apartment = new Apartment();
+        $apartment->landlord_id = $landlord->id;
+        $apartment->title = $request->title;
+        $apartment->location = $request->location;
+        $apartment->rent = $request->rent;
+        $apartment->description = $request->description;
+
+        if ($request->hasFile('image')) {
+            if ($apartment->image && Storage::disk('public')->exists('students/' . $apartment->image)) {
+                Storage::disk('public')->delete('apartments/' . $apartment->image);
+            }
+            $path = $request->file('image')->store('apartments', 'public');
+            $apartment->image = basename($path);
+        }
+
+        $apartment->save();
+
+        return redirect()->route('profile')->with('success', 'Apartment added successfully!');
+    }
+}

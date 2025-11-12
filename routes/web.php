@@ -1,0 +1,55 @@
+<?php
+
+use App\Http\Controllers\ApartmentController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\LandlordController;
+use App\Http\Controllers\StudentController;
+use Illuminate\Support\Facades\Route;
+
+Route::get('/', function () {
+    return view('welcome');
+});
+
+Route::get('/login', [AuthController::class, 'ShowLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
+
+Route::get('/register', [AuthController::class, 'ShowRegister'])->name('register');
+Route::post('/register', [AuthController::class, 'register'])->name('register.submit');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::group(['middleware' => ['role:landlord'], 'prefix' => 'landlord'], function () {
+
+    // Profile
+    Route::get('/profile', [LandlordController::class, 'profile'])->name('profile');
+    Route::post('/profile', [LandlordController::class, 'updateProfile'])->name('updateProfile');
+
+    // Apartment Posts (Create new apartment listing)
+    Route::get('/post', [LandlordController::class, 'createPost'])->name('posts.create');
+    Route::post('/post', [LandlordController::class, 'storePost'])->name('store.post');
+
+
+    Route::get('/applications', [LandlordController::class, 'applications'])->name('applications');
+    Route::put('/landlord/applications/{id}', [LandlordController::class, 'updateApplication'])
+        ->name('landlord.applications.update');
+
+    Route::get('/dashboard', [LandlordController::class, 'dashboard'])->name('dashboard');
+
+    // Apartments (CRUD)
+    Route::get('/apartments/{apartment}', [ApartmentController::class, 'show'])->name('apartments.show'); // View
+    Route::get('/apartments/{apartment}/edit', [ApartmentController::class, 'edit'])->name('apartments.edit'); // Edit
+    Route::put('/apartments/{apartment}', [ApartmentController::class, 'update'])->name('apartments.update'); // Update
+    Route::delete('/apartments/{apartment}', [ApartmentController::class, 'destroy'])->name('apartments.destroy'); // Delete
+
+});
+
+Route::group(['middleware' => ['role:student'], 'prefix' => 'student'], function () {
+    Route::get('/profile', [StudentController::class, 'profile'])->name('student.profile');
+    Route::post('/profile', [StudentController::class, 'updateProfile'])->name('student.updateProfile');
+
+    Route::get('/apartments', [StudentController::class, 'apartments'])->name('student.apartments');
+    Route::post('/apartments/{apartment}/apply', [StudentController::class, 'applyApartment'])->name('student.apartments.apply');
+
+    Route::get('/applications', [StudentController::class, 'applications'])->name('student.applications');
+
+   
+});
