@@ -66,6 +66,7 @@
                     @endif
 
                     {{-- 🔹 STUDENT LINKS --}}
+                    {{-- 🔹 STUDENT LINKS --}}
                     @if (auth()->user()->hasRole('student'))
                         <li class="nav-item">
                             <a class="nav-link {{ request()->is('student/profile*') ? 'active' : '' }}"
@@ -75,16 +76,15 @@
                             <a class="nav-link {{ request()->is('student/apartments*') ? 'active' : '' }}"
                                 href="{{ url('/student/apartments') }}">Apartments</a>
                         </li>
-                        {{-- <li class="nav-item">
+                        <li class="nav-item">
                             <a class="nav-link {{ request()->is('student/roommates*') ? 'active' : '' }}"
-                                href="{{ route('student.roommate.posts') }}">Roommates</a>
-                        </li> --}}
+                                href="{{ route('student.roommates.index') }}">Roommates</a>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link {{ request()->is('student/applications*') ? 'active' : '' }}"
-                                href="{{ url('/student/applications') }}">Application</a>
+                                href="{{ url('/student/applications') }}">Applications</a>
                         </li>
                     @endif
-
 
                     {{-- Logout --}}
                     <li class="nav-item">

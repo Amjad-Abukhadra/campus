@@ -33,16 +33,16 @@
                                 <img src="{{ asset('storage/apartments/' . $apartment->image) }}" class="card-img-top"
                                     style="height: 200px;">
                             @else
-                                <div class="bg-secondary d-flex align-items-center justify-content-center"
-                                    style="height: 200px;">
+                                <div class="bg-secondary d-flex align-items-center justify-content-center" style="height: 200px;">
                                     <i class="bi bi-building fs-1 text-white opacity-50"></i>
                                 </div>
                             @endif
                             {{-- Rent Badge --}}
-                            <span
-                                class="position-absolute top-2 end-2 bg-primary text-white px-3 py-1 rounded-pill fw-bold shadow-sm">
+                            <span class="position-absolute top-0 end-0 bg-primary text-white px-3 py-1 
+                                     rounded-pill fw-bold shadow-sm m-2">
                                 {{ $apartment->rent }} JD/mo
                             </span>
+
                         </div>
 
                         {{-- Card Body --}}
@@ -50,20 +50,30 @@
                             <h5 class="card-title fw-bold">{{ $apartment->title }}</h5>
                             <p class="text-muted mb-2" style="flex-grow: 1;">{{ Str::limit($apartment->description, 80) }}
                             </p>
+                            <p class="mb-1">
+                                <i class="bi bi-person-circle text-primary me-1"></i>
+
+                                <a href="{{ route('student.landlord.profile', $apartment->landlord->id) }}"
+                                    class="badge bg-info text-dark px-2 py-1 rounded-pill text-decoration-none">
+                                    {{ $apartment->landlord->name ?? 'Unknown' }}
+                                </a>
+                            </p>
+
 
                             <p class="mb-1">
                                 <i class="bi bi-geo-alt-fill text-danger me-1"></i>
                                 <small>{{ $apartment->location }}</small>
                             </p>
 
+
                             {{-- Apply Button / Status --}}
                             <div class="mt-3">
                                 @if ($status)
                                     <button
                                         class="btn 
-                                    @if ($status == 'pending') btn-warning
-                                    @elseif($status == 'approved') btn-success
-                                    @else btn-danger @endif w-100"
+                                                                                                            @if ($status == 'pending') btn-warning
+                                                                                                            @elseif($status == 'approved') btn-success
+                                                                                                            @else btn-danger @endif w-100"
                                         disabled>
                                         {{ ucfirst($status) }}
                                     </button>

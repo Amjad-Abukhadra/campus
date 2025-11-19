@@ -93,21 +93,25 @@
                                 <div class="rounded-3 p-4 text-center bg-light border border-2"
                                     style="border-style: dashed;">
                                     <i class="bi bi-cloud-upload fs-1 text-muted mb-2 d-block"></i>
-                                    <input type="file" id="image" name="image"
-                                        class="form-control border-0 bg-white" accept="image/*"
-                                        aria-label="Upload apartment photos">
+                                    <input type="file" id="image" name="image" class="form-control border-0 bg-white"
+                                        accept="image/*" aria-label="Upload apartment photos">
                                     <small class="text-muted d-block mt-2">Upload clear photos (JPG, PNG)</small>
+                                    <img id="imagePreview" src="#" alt="Preview" class="img-fluid rounded-3 mt-3"
+                                        style="display: none; max-height: 300px;">
                                     @error('image')
                                         <div class="text-danger small mt-2">{{ $message }}</div>
                                     @enderror
                                 </div>
+
                             </div>
 
                             <!-- Description -->
                             <div class="mb-4">
                                 <div class="form-floating">
-                                    <textarea name="description" id="description" class="form-control rounded-3 @error('description') is-invalid @enderror"
-                                        placeholder="Describe your apartment..." style="height: 140px">{{ old('description') }}</textarea>
+                                    <textarea name="description" id="description"
+                                        class="form-control rounded-3 @error('description') is-invalid @enderror"
+                                        placeholder="Describe your apartment..."
+                                        style="height: 140px">{{ old('description') }}</textarea>
                                     <label for="description"><i class="bi bi-card-text me-1"></i> Description</label>
                                     @error('description')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -145,4 +149,23 @@
             </div>
         </form>
     </div>
+    <script>
+        const imageInput = document.getElementById('image');
+        const imagePreview = document.getElementById('imagePreview');
+
+        imageInput.addEventListener('change', function () {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            } else {
+                imagePreview.style.display = 'none';
+            }
+        });
+    </script>
+
 @endsection

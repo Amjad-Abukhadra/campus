@@ -17,6 +17,19 @@ class RoommatePost extends Model
         'cleanliness_level',
         'smoking',
     ];
+    public function student()
+    {
+        return $this->belongsTo(User::class, 'student_id');
+    }
 
-    
+    public function apartment()
+    {
+        return $this->belongsTo(Apartment::class);
+    }
+
+    public function roommates()
+    {
+        return $this->hasMany(Roommate::class, 'post_id');
+    }
+
 }

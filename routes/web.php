@@ -3,6 +3,7 @@
 use App\Http\Controllers\ApartmentController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LandlordController;
+use App\Http\Controllers\RoommateController;
 use App\Http\Controllers\StudentController;
 use Illuminate\Support\Facades\Route;
 
@@ -51,5 +52,18 @@ Route::group(['middleware' => ['role:student'], 'prefix' => 'student'], function
 
     Route::get('/applications', [StudentController::class, 'applications'])->name('student.applications');
 
-   
+    Route::get('/landlord/{id}', [StudentController::class, 'viewLandlord'])
+        ->name('student.landlord.profile');
+    // ROOMMATE POSTS
+    Route::get('/roommates', [RoommateController::class, 'index'])->name('student.roommates.index');
+    Route::get('/roommates/create', [RoommateController::class, 'create'])->name('student.roommates.create');
+    Route::post('/roommates/store', [RoommateController::class, 'store'])->name('student.roommates.store');
+
+    // APPLY TO BE ROOMMATE
+    Route::post('/roommates/{post}/apply', [RoommateController::class, 'apply'])->name('student.roommates.apply');
+
+    // MANAGE APPLICATIONS FOR THE CREATOR
+    Route::get('/roommates/manage', [RoommateController::class, 'manage'])->name('student.roommates.manage');
+    Route::post('/roommates/{roommate}/update/{status}', [RoommateController::class, 'updateStatus'])->name('student.roommates.update');
+
 });

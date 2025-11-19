@@ -43,8 +43,7 @@
                                 {{-- Image upload --}}
                                 <div class="mb-3">
                                     <label class="form-label small fw-semibold">Profile Image</label>
-                                    <input type="file" name="image" class="form-control form-control-sm"
-                                        accept="image/*">
+                                    <input type="file" name="image" class="form-control form-control-sm" accept="image/*">
                                 </div>
 
                                 {{-- Name --}}
@@ -99,61 +98,17 @@
                     @forelse ($student->applications as $application)
                         <div class="col-md-6">
                             <div class="card h-100 shadow-sm border-0 hover-lift transition">
-                                @if ($application->apartment->image)
-                                    <div class="position-relative overflow-hidden">
+                                <div class="position-relative overflow-hidden">
+                                    @if ($application->apartment->image)
                                         <img src="{{ asset('storage/apartments/' . $application->apartment->image) }}"
-                                            class="card-img-top" alt="Apartment Image"
-                                            style="height: 220px; transition: transform 0.3s;">
-                                        <span
-                                            class="position-absolute top-0 end-0 m-3 badge 
+                                            class="card-img-top" alt="Apartment Image" style="height: 220px;">
+                                    @endif
+                                    <span
+                                        class="position-absolute top-0 end-0 m-3 badge 
                                             {{ $application->status === 'accepted' ? 'bg-success' : ($application->status === 'pending' ? 'bg-warning text-dark' : 'bg-danger') }}">
-                                            {{ ucfirst($application->status) }}
-                                        </span>
-                                    </div>
-
-                                    <!-- ================= VIEW MODAL ================= -->
-                                    <div class="modal fade" id="viewApartmentModal{{ $application->apartment->id }}"
-                                        tabindex="-1" aria-hidden="true">
-                                        <div class="modal-dialog modal-lg modal-dialog-centered">
-                                            <div class="modal-content shadow-lg border-0">
-                                                <div class="modal-header bg-primary text-white">
-                                                    <h5 class="modal-title">
-                                                        <i class="bi bi-eye me-2"></i> {{ $application->apartment->title }}
-                                                    </h5>
-                                                    <button type="button" class="btn-close btn-close-white"
-                                                        data-bs-dismiss="modal"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <div class="row align-items-center">
-                                                        {{-- Left: Image --}}
-                                                        @if ($application->apartment->image)
-                                                            <div class="col-md-5 text-center mb-3 mb-md-0">
-                                                                <img src="{{ asset('storage/apartments/' . $application->apartment->image) }}"
-                                                                    class="img-fluid rounded" alt="Apartment Image"
-                                                                    style="max-height: 250px; object-fit: cover;">
-                                                            </div>
-                                                        @endif
-
-                                                        {{-- Right: Info --}}
-                                                        <div class="col-md-7">
-                                                            <p class="fs-5 mb-2"><strong>Location:</strong>
-                                                                {{ $application->apartment->location }}</p>
-                                                            <p class="fs-5 mb-2"><strong>Rent:</strong>
-                                                                {{ $application->apartment->rent }} JD/month</p>
-                                                            <p class="fs-5 mb-1"><strong>Description:</strong></p>
-                                                            <p class="fs-6 text-muted">
-                                                                {{ $application->apartment->description }}</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer justify-content-center">
-                                                    <button class="btn btn-secondary"
-                                                        data-bs-dismiss="modal">Close</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endif
+                                        {{ ucfirst($application->status) }}
+                                    </span>
+                                </div>
 
                                 <div class="card-body d-flex flex-column">
                                     <h5 class="card-title mb-2">{{ $application->apartment->title }}</h5>
@@ -174,7 +129,47 @@
                                         data-bs-target="#viewApartmentModal{{ $application->apartment->id }}">
                                         <i class="bi bi-eye"></i> View Apartment
                                     </button>
+                                </div>
+                            </div>
 
+                            <!-- Modal: Always render -->
+                            <div class="modal fade" id="viewApartmentModal{{ $application->apartment->id }}" tabindex="-1"
+                                aria-hidden="true">
+                                <div class="modal-dialog modal-lg modal-dialog-centered">
+                                    <div class="modal-content shadow-lg border-0">
+                                        <div class="modal-header bg-primary text-white">
+                                            <h5 class="modal-title">
+                                                <i class="bi bi-eye me-2"></i> {{ $application->apartment->title }}
+                                            </h5>
+                                            <button type="button" class="btn-close btn-close-white"
+                                                data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row align-items-center">
+                                                {{-- Left: Image --}}
+                                                @if ($application->apartment->image)
+                                                    <div class="col-md-5 text-center mb-3 mb-md-0">
+                                                        <img src="{{ asset('storage/apartments/' . $application->apartment->image) }}"
+                                                            class="img-fluid rounded" alt="Apartment Image"
+                                                            style="max-height: 250px; object-fit: cover;">
+                                                    </div>
+                                                @endif
+
+                                                {{-- Right: Info --}}
+                                                <div class="{{ $application->apartment->image ? 'col-md-7' : 'col-12' }}">
+                                                    <p class="fs-5 mb-2"><strong>Location:</strong>
+                                                        {{ $application->apartment->location }}</p>
+                                                    <p class="fs-5 mb-2"><strong>Rent:</strong>
+                                                        {{ $application->apartment->rent }} JD/month</p>
+                                                    <p class="fs-5 mb-1"><strong>Description:</strong></p>
+                                                    <p class="fs-6 text-muted">{{ $application->apartment->description }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer justify-content-center">
+                                            <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

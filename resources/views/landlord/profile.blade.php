@@ -9,8 +9,8 @@
                     <div class="card-body text-center p-4">
                         {{-- Profile Image --}}
                         <div class="position-relative d-inline-block mb-3">
-                            @if ($landlord->image && file_exists(public_path('storage/apartments/' . $landlord->image)))
-                                <img src="{{ asset('storage/apartments/' . $landlord->image) }}" alt="Profile Image"
+                            @if ($landlord->image && file_exists(public_path('storage/landlord/' . $landlord->image)))
+                                <img src="{{ asset('storage/landlord/' . $landlord->image) }}" alt="Profile Image"
                                     class="rounded-circle border border-3 border-light shadow" width="120" height="120"
                                     style="object-fit: cover;">
                             @else

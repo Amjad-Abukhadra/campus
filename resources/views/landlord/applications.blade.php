@@ -57,7 +57,8 @@
                                                 <div>
                                                     <div class="fw-semibold">{{ $application->apartment->title }}</div>
                                                     <small class="text-muted">
-                                                        <i class="bi bi-geo-alt me-1"></i>{{ $application->apartment->location }}
+                                                        <i
+                                                            class="bi bi-geo-alt me-1"></i>{{ $application->apartment->location }}
                                                     </small>
                                                 </div>
                                             </div>
@@ -128,39 +129,21 @@
                                                         @endif
 
                                                         {{-- Apartment Info --}}
-                                                        <div class="{{ $application->apartment->image ? 'col-md-7' : 'col-12' }}">
+                                                        <div
+                                                            class="{{ $application->apartment->image ? 'col-md-7' : 'col-12' }}">
                                                             <div class="mb-4 pb-3 border-bottom">
                                                                 <h6 class="text-primary fw-bold mb-3">
                                                                     <i class="bi bi-building me-2"></i>Apartment Information
                                                                 </h6>
-                                                                <div class="mb-3">
-                                                                    <label
-                                                                        class="text-muted small fw-semibold text-uppercase mb-1">Title</label>
-                                                                    <p class="fs-5 fw-semibold mb-0">
-                                                                        {{ $application->apartment->title }}</p>
-                                                                </div>
-                                                                <div class="mb-3">
-                                                                    <label
-                                                                        class="text-muted small fw-semibold text-uppercase mb-1">Location</label>
-                                                                    <p class="mb-0">
-                                                                        <i class="bi bi-geo-alt-fill text-primary me-1"></i>
-                                                                        {{ $application->apartment->location }}
-                                                                    </p>
-                                                                </div>
-                                                                <div class="mb-3">
-                                                                    <label
-                                                                        class="text-muted small fw-semibold text-uppercase mb-1">Monthly
-                                                                        Rent</label>
-                                                                    <p class="fs-4 fw-bold text-primary mb-0">
-                                                                        {{ $application->apartment->rent }} JD</p>
-                                                                </div>
-                                                                <div>
-                                                                    <label
-                                                                        class="text-muted small fw-semibold text-uppercase mb-2 d-block">Description</label>
-                                                                    <p class="text-muted small mb-0"
-                                                                        style="line-height: 1.6;">
-                                                                        {{ $application->apartment->description }}</p>
-                                                                </div>
+                                                                <p class="mb-1"><strong>Title:</strong>
+                                                                    {{ $application->apartment->title }}</p>
+                                                                <p class="mb-1"><strong>Location:</strong> <i
+                                                                        class="bi bi-geo-alt-fill text-primary me-1"></i>{{ $application->apartment->location }}
+                                                                </p>
+                                                                <p class="mb-1"><strong>Rent:</strong>
+                                                                    {{ $application->apartment->rent }} JD</p>
+                                                                <p class="mb-0"><strong>Description:</strong>
+                                                                    {{ $application->apartment->description }}</p>
                                                             </div>
 
                                                             {{-- Student Info --}}
@@ -168,70 +151,54 @@
                                                                 <h6 class="text-primary fw-bold mb-3">
                                                                     <i class="bi bi-person-circle me-2"></i>Student Information
                                                                 </h6>
-                                                                <div class="mb-3">
-                                                                    <label
-                                                                        class="text-muted small fw-semibold text-uppercase mb-1">Name</label>
-                                                                    <p class="fw-semibold mb-0">{{ $application->student->name }}</p>
-                                                                </div>
-                                                                <div class="mb-3">
-                                                                    <label
-                                                                        class="text-muted small fw-semibold text-uppercase mb-1">Email</label>
-                                                                    <p class="mb-0">{{ $application->student->email }}</p>
-                                                                </div>
+                                                                <p class="mb-1"><strong>Name:</strong>
+                                                                    {{ $application->student->name }}</p>
+                                                                <p class="mb-1"><strong>Email:</strong>
+                                                                    {{ $application->student->email }}</p>
                                                                 @if ($application->student->phone_number)
-                                                                    <div>
-                                                                        <label
-                                                                            class="text-muted small fw-semibold text-uppercase mb-1">Phone</label>
-                                                                        <p class="mb-0">{{ $application->student->phone_number }}</p>
-                                                                    </div>
+                                                                    <p class="mb-0"><strong>Phone:</strong>
+                                                                        {{ $application->student->phone_number }}</p>
                                                                 @endif
                                                             </div>
 
-                                                            {{-- Roommate Info (if any) --}}
+                                                            {{-- Roommate Info --}}
                                                             @if ($application->roommate)
                                                                 <div class="mb-4 pb-3 border-bottom">
                                                                     <h6 class="text-primary fw-bold mb-3">
                                                                         <i class="bi bi-people me-2"></i>Roommate Information
                                                                     </h6>
-                                                                    <div class="mb-3">
-                                                                        <label
-                                                                            class="text-muted small fw-semibold text-uppercase mb-1">Name</label>
-                                                                        <p class="fw-semibold mb-0">{{ $application->roommate->name }}</p>
-                                                                    </div>
-                                                                    <div>
-                                                                        <label
-                                                                            class="text-muted small fw-semibold text-uppercase mb-1">Email</label>
-                                                                        <p class="mb-0">{{ $application->roommate->email }}</p>
-                                                                    </div>
+                                                                    <p class="mb-1"><strong>Name:</strong>
+                                                                        {{ $application->roommate->name }}</p>
+                                                                    <p class="mb-0"><strong>Email:</strong>
+                                                                        {{ $application->roommate->email }}</p>
                                                                 </div>
                                                             @endif
 
                                                             {{-- Status Update --}}
-                                                            <div>
-                                                                <h6 class="text-primary fw-bold mb-3">
+                                                            <div class="mb-3">
+                                                                <h6 class="text-primary fw-bold mb-2">
                                                                     <i class="bi bi-gear me-2"></i>Update Application Status
                                                                 </h6>
-                                                                <form action="{{ route('landlord.applications.update', $application->id) }}"
+                                                                <form
+                                                                    action="{{ route('landlord.applications.update', $application->id) }}"
                                                                     method="POST">
                                                                     @csrf
                                                                     @method('PUT')
+                                                                    <select name="status"
+                                                                        class="form-select form-select-sm mb-2">
+                                                                        <option value="pending" {{ $application->status == 'pending' ? 'selected' : '' }}>Pending</option>
+                                                                        <option value="accepted" {{ $application->status == 'accepted' ? 'selected' : '' }}>Accepted</option>
+                                                                        <option value="rejected" {{ $application->status == 'rejected' ? 'selected' : '' }}>Rejected</option>
+                                                                    </select>
                                                                     <div class="d-flex gap-2">
-                                                                        <select name="status" class="form-select form-select-lg">
-                                                                            <option value="pending"
-                                                                                {{ $application->status == 'pending' ? 'selected' : '' }}>
-                                                                                Pending
-                                                                            </option>
-                                                                            <option value="accepted"
-                                                                                {{ $application->status == 'accepted' ? 'selected' : '' }}>
-                                                                                Accepted
-                                                                            </option>
-                                                                            <option value="rejected"
-                                                                                {{ $application->status == 'rejected' ? 'selected' : '' }}>
-                                                                                Rejected
-                                                                            </option>
-                                                                        </select>
-                                                                        <button type="submit" class="btn btn-success">
-                                                                            <i class="bi bi-check-circle me-2"></i>Save
+                                                                        <button type="submit"
+                                                                            class="btn btn-success btn-sm flex-grow-1">
+                                                                            <i class="bi bi-check-circle me-1"></i> Save
+                                                                        </button>
+                                                                        <button type="button"
+                                                                            class="btn btn-secondary btn-sm flex-grow-1"
+                                                                            data-bs-dismiss="modal">
+                                                                            <i class="bi bi-x-circle me-1"></i> Close
                                                                         </button>
                                                                     </div>
                                                                 </form>
@@ -239,25 +206,20 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="modal-footer border-0 pt-0 pb-4">
-                                                    <button type="button" class="btn btn-secondary"
-                                                        data-bs-dismiss="modal">Close</button>
-                                                </div>
                                             </div>
                                         </div>
-                                    </div>
 
                                 @empty
-                                    <tr>
-                                        <td colspan="6" class="text-center py-5">
-                                            <div class="py-5">
-                                                <i class="bi bi-envelope-paper text-muted" style="font-size: 4rem;"></i>
-                                                <h5 class="mt-3 mb-2">No Applications Found</h5>
-                                                <p class="text-muted mb-4">You haven't received any applications yet.</p>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforelse
+                                        <tr>
+                                            <td colspan="6" class="text-center py-5">
+                                                <div class="py-5">
+                                                    <i class="bi bi-envelope-paper text-muted" style="font-size: 4rem;"></i>
+                                                    <h5 class="mt-3 mb-2">No Applications Found</h5>
+                                                    <p class="text-muted mb-4">You haven't received any applications yet.</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforelse
                             </tbody>
                         </table>
                     </div>

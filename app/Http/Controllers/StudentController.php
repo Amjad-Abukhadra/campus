@@ -6,6 +6,7 @@ use App\Models\Apartment;
 use App\Models\Application;
 use App\Models\Roommate;
 use App\Models\RoommatePost;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -41,17 +42,29 @@ class StudentController extends Controller
     public function apartments()
     {
         $student = Auth::user();
-        $appliedApartmentIds = $student->applications()
-            ->whereIn('status', ['pending', 'rejected'])
+
+        $acceptedApartmentIds = $student->applications()
+            ->where('status', 'accepted')
             ->pluck('apartment_id')
             ->toArray();
 
-        $apartments = Apartment::where('id', $appliedApartmentIds)->get();
+        $apartments = Apartment::with('landlord')
+            ->whereNotIn('id', $acceptedApartmentIds)
+            ->get();
 
-        $applications = $student->applications()->pluck('status', 'apartment_id')->toArray();
+        $applicationsStatus = $student->applications()
+            ->whereIn('status', ['pending', 'rejected'])
+            ->pluck('status', 'apartment_id')
+            ->toArray();
 
-        return view('student.apartments', compact('apartments', 'applications'));
+        return view('student.apartments', [
+            'apartments' => $apartments,
+            'applications' => $applicationsStatus,
+        ]);
     }
+
+
+
     public function applyApartment(Apartment $apartment)
     {
         $student = Auth::user();
@@ -73,4 +86,15 @@ class StudentController extends Controller
 
         return view('student.applications', compact('applications'));
     }
+    public function viewLandlord($id)
+    {
+        $landlord = User::findOrFail($id);
+
+        // apartments by this landlord
+        $apartments = Apartment::where('landlord_id', $id)->get();
+
+        return view('student.landlord-profile', compact('landlord', 'apartments'));
+    }
+
+    
 }
