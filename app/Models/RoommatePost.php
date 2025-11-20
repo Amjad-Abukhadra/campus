@@ -16,10 +16,12 @@ class RoommatePost extends Model
         'description',
         'cleanliness_level',
         'smoking',
+        'max_roommates',
+        'is_open',
     ];
     public function student()
     {
-        return $this->belongsTo(User::class, 'student_id');
+        return $this->belongsTo(User::class, 'std_id');
     }
 
     public function apartment()
@@ -30,6 +32,10 @@ class RoommatePost extends Model
     public function roommates()
     {
         return $this->hasMany(Roommate::class, 'post_id');
+    }
+    public function acceptedCount()
+    {
+        return $this->roommates()->where('status', 'accepted')->count();
     }
 
 }

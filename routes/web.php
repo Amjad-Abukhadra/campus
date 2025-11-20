@@ -58,12 +58,14 @@ Route::group(['middleware' => ['role:student'], 'prefix' => 'student'], function
     Route::get('/roommates', [RoommateController::class, 'index'])->name('student.roommates.index');
     Route::get('/roommates/create', [RoommateController::class, 'create'])->name('student.roommates.create');
     Route::post('/roommates/store', [RoommateController::class, 'store'])->name('student.roommates.store');
+    Route::get('/roommates/my-posts', [RoommateController::class, 'myPosts'])->name('student.roommates.myPosts');
 
     // APPLY TO BE ROOMMATE
     Route::post('/roommates/{post}/apply', [RoommateController::class, 'apply'])->name('student.roommates.apply');
 
     // MANAGE APPLICATIONS FOR THE CREATOR
     Route::get('/roommates/manage', [RoommateController::class, 'manage'])->name('student.roommates.manage');
-    Route::post('/roommates/{roommate}/update/{status}', [RoommateController::class, 'updateStatus'])->name('student.roommates.update');
+    Route::post('/roommates/{roommate}/update', [RoommateController::class, 'updateStatus'])->name('student.roommates.update');
+    Route::put('/roommates/post/{post}/update', [RoommateController::class, 'updatePost'])->name('student.roommates.updatePost');
 
 });

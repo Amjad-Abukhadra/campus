@@ -53,6 +53,11 @@
                                         required>
                                 </div>
 
+                                <div class="mb-3">
+                                    <label class="form-label small fw-semibold">Phone Number</label>
+                                    <input type="text" name="phone_number" value="{{ $student->phone_number }}" class="form-control"
+                                        required>
+                                </div>
                                 {{-- Email --}}
                                 <div class="mb-3">
                                     <label class="form-label small fw-semibold">Email</label>
@@ -105,7 +110,7 @@
                                     @endif
                                     <span
                                         class="position-absolute top-0 end-0 m-3 badge 
-                                            {{ $application->status === 'accepted' ? 'bg-success' : ($application->status === 'pending' ? 'bg-warning text-dark' : 'bg-danger') }}">
+                                                    {{ $application->status === 'accepted' ? 'bg-success' : ($application->status === 'pending' ? 'bg-warning text-dark' : 'bg-danger') }}">
                                         {{ ucfirst($application->status) }}
                                     </span>
                                 </div>
