@@ -45,7 +45,7 @@ class AuthController extends Controller
             } elseif ($user->hasRole('landlord')) {
                 return redirect('/landlord/dashboard');
             } elseif ($user->hasRole('student')) {
-                return redirect('/student/profile');
+                return redirect('/student/apartments');
             } else {
                 Auth::logout(); // no valid role
                 return redirect('/login')->withErrors([

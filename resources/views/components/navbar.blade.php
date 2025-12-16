@@ -69,10 +69,6 @@
                     {{-- 🔹 STUDENT LINKS --}}
                     @if (auth()->user()->hasRole('student'))
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->is('student/profile*') ? 'active' : '' }}"
-                                href="{{ url('/student/profile') }}">Profile</a>
-                        </li>
-                        <li class="nav-item">
                             <a class="nav-link {{ request()->is('student/apartments*') ? 'active' : '' }}"
                                 href="{{ url('/student/apartments') }}">Apartments</a>
                         </li>
@@ -83,6 +79,10 @@
                         <li class="nav-item">
                             <a class="nav-link {{ request()->is('student/applications*') ? 'active' : '' }}"
                                 href="{{ url('/student/applications') }}">Applications</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->is('student/profile*') ? 'active' : '' }}"
+                                href="{{ url('/student/profile') }}">Profile</a>
                         </li>
                     @endif
 

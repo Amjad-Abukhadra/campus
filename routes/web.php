@@ -67,5 +67,5 @@ Route::group(['middleware' => ['role:student'], 'prefix' => 'student'], function
     Route::get('/roommates/manage', [RoommateController::class, 'manage'])->name('student.roommates.manage');
     Route::post('/roommates/{roommate}/update', [RoommateController::class, 'updateStatus'])->name('student.roommates.update');
     Route::put('/roommates/post/{post}/update', [RoommateController::class, 'updatePost'])->name('student.roommates.updatePost');
-
+    Route::get('/roommates/my-applications', [RoommateController::class, 'myApplications'])->name('student.roommates.applications');
 });

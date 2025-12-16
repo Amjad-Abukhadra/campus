@@ -13,25 +13,35 @@
         </div>
 
         {{-- Action Buttons --}}
-        <div class="d-flex flex-wrap gap-2 mb-4">
-            <a href="{{ route('student.roommates.create') }}" class="btn btn-primary px-4 fw-semibold rounded-3">
-                <i class="bi bi-pencil-square me-2"></i>Create Post
+        <div class="d-flex flex-wrap gap-3 mb-5 justify-content-start">
+            <a href="{{ route('student.roommates.create') }}"
+                class="btn btn-primary d-flex align-items-center px-4 py-2 rounded-4 shadow-sm fw-semibold transition-hover">
+                <i class="bi bi-plus-square me-2 fs-5"></i>
+                Create Post
             </a>
-            <a href="{{ route('student.roommates.manage') }}" class="btn btn-warning px-4 fw-semibold rounded-3">
-                <i class="bi bi-inbox me-2"></i>Manage Applications
+            <a href="{{ route('student.roommates.manage') }}"
+                class="btn btn-warning d-flex align-items-center px-4 py-2 rounded-4 shadow-sm fw-semibold transition-hover text-dark">
+                <i class="bi bi-list-check me-2 fs-5"></i>
+                Manage Applications
             </a>
-            <a href="{{ route('student.roommates.myPosts') }}" class="btn btn-secondary px-4 fw-semibold rounded-3">
-                <i class="bi bi-file-earmark-text me-2"></i>My Posts
+            <a href="{{ route('student.roommates.myPosts') }}"
+                class="btn btn-secondary d-flex align-items-center px-4 py-2 rounded-4 shadow-sm fw-semibold transition-hover text-white">
+                <i class="bi bi-journal-text me-2 fs-5"></i>
+                My Posts
+            </a>
+            <a href="{{ route('student.roommates.applications') }}"
+                class="btn btn-success d-flex align-items-center px-4 py-2 rounded-4 shadow-sm fw-semibold transition-hover">
+                <i class="bi bi-calendar-check me-2 fs-5"></i>
+                Reservation
             </a>
         </div>
-
         {{-- Display Validation Errors --}}
-        @if($errors->any())
+        @if ($errors->any())
             <div class="alert alert-danger border-0 rounded-4 shadow-sm mb-4" role="alert">
                 <i class="bi bi-exclamation-triangle-fill me-2"></i>
                 <strong>There were some problems with your input:</strong>
                 <ul class="mb-0 mt-2">
-                    @foreach($errors->all() as $error)
+                    @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach
                 </ul>
@@ -39,119 +49,144 @@
             </div>
         @endif
 
-        {{-- Display Session Error --}}
-        @if(session('error'))
+        {{-- Session Messages --}}
+        @if (session('error'))
             <div class="alert alert-danger border-0 rounded-4 shadow-sm mb-4 d-flex align-items-center justify-content-between"
                 role="alert">
-                <div>
-                    <i class="bi bi-x-circle-fill me-2"></i>
-                    <strong>Error:</strong> {{ session('error') }}
-                </div>
+                <div><i class="bi bi-x-circle-fill me-2"></i><strong>Error:</strong> {{ session('error') }}</div>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endif
 
-        {{-- Display Session Success --}}
-        @if(session('success'))
+        @if (session('success'))
             <div class="alert alert-success border-0 rounded-4 shadow-sm mb-4 d-flex align-items-center justify-content-between"
                 role="alert">
-                <div>
-                    <i class="bi bi-check-circle-fill me-2"></i>
-                    <strong>Success:</strong> {{ session('success') }}
-                </div>
+                <div><i class="bi bi-check-circle-fill me-2"></i><strong>Success:</strong> {{ session('success') }}</div>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endif
 
         {{-- Posts Grid --}}
-        @if($posts->count() > 0)
+        @if ($posts->count() > 0)
             <div class="row g-4">
-                @foreach($posts as $post)
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden transition-all"
-                            style="transition: all 0.3s ease;">
+                @foreach ($posts as $post)
+                    <div class="row g-4">
+                        @foreach ($posts as $post)
+                            <div class="col-12">
+                                <div class="card shadow-lg rounded-lg border-0 h-100 overflow-hidden">
+                                    <div class="row g-0 align-items-center " style="min-height: 180px; max-height: 250px;">
+                                        {{-- Image Section --}}
+                                        <div class="col-md-4">
+                                            <div class="position-relative "
+                                                style="max-height: 220px; overflow: hidden;">
+                                                @if ($post->apartment->image)
+                                                    <img src="{{ asset('storage/apartments/' . $post->apartment->image) }}"
+                                                    style="height:300px ; width:300px"
+                                                    alt="Apartment Image">
+                                                @else
+                                                    <div class="bg-light d-flex align-items-center justify-content-center h-100"
+                                                        style="min-height:180px;">
+                                                        <i class="bi bi-building fs-1 text-secondary opacity-25"></i>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        </div>
+                                        {{-- Content Section --}}
+                                        <div class="col-md-8">
+                                            <div class="card-body p-3 d-flex flex-column ">
+                                                {{-- Title & Author --}}
+                                                <div class="d-flex justify-content-between align-items-start mb-1">
+                                                    <div class="flex-grow-1">
+                                                        <h5 class="fw-bold mb-1 text-truncate">
+                                                            {{ $post->title }}
+                                                        </h5>
+                                                        <div class="text-muted small">
+                                                            <i class="bi bi-person-circle me-1"></i>
+                                                            {{ $post->student->name ?? 'N/A' }}
+                                                            <span class="mx-2">•</span>
+                                                            <i
+                                                                class="bi bi-clock me-1"></i>{{ $post->created_at->diffForHumans() }}
+                                                        </div>
+                                                    </div>
+                                                </div>
 
-                            {{-- Apartment Image --}}
-                            @if($post->apartment->image)
-                                <div class="position-relative overflow-hidden" style="height: 200px;">
-                                    <img src="{{ asset('storage/apartments/' . $post->apartment->image) }}" class="w-100 h-100"
-                                        alt="Apartment Image" style=" transition: transform 0.3s ease;">
-                                </div>
-                            @else
-                                <div class="bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
-                                    <i class="bi bi-building fs-1 text-secondary opacity-25"></i>
-                                </div>
-                            @endif
+                                                {{-- Description --}}
+                                                <p class="text-muted mb-2 small"
+                                                    style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                                                    {{ $post->description }}
+                                                </p>
 
-                            {{-- Card Body --}}
-                            <div class="card-body d-flex flex-column p-4">
-                                {{-- Title --}}
-                                <h5 class="fw-bold text-dark mb-2">
-                                    <i class="bi bi-chat-square-text me-2 text-primary"></i>{{ $post->title }}
-                                </h5>
+                                                {{-- Preferences Tags --}}
+                                                <div class="mb-2 d-flex flex-wrap gap-1">
+                                                    <span
+                                                        class="badge bg-info bg-opacity-10 text-info px-2 py-1 rounded-pill fs-7">
+                                                        <i class="bi bi-sparkles me-1"></i>Cleanliness:
+                                                        {{ $post->cleanliness_level }}
+                                                    </span>
+                                                    <span
+                                                        class="badge bg-{{ $post->smoking ? 'danger' : 'success' }} bg-opacity-10 text-{{ $post->smoking ? 'danger' : 'success' }} px-2 py-1 rounded-pill fs-7">
+                                                        <i
+                                                            class="bi bi-{{ $post->smoking ? 'emoji-smile' : 'emoji-neutral' }} me-1"></i>
+                                                        {{ $post->smoking ? 'Smoking' : 'No Smoking' }}
+                                                    </span>
+                                                    @if ($post->quiet_hours)
+                                                        <span
+                                                            class="badge bg-primary bg-opacity-10 text-primary px-2 py-1 rounded-pill fs-7">
+                                                            <i class="bi bi-volume-mute me-1"></i>Quiet Hours
+                                                        </span>
+                                                    @endif
+                                                </div>
 
-                                {{-- Description --}}
-                                <p class="text-muted mb-3 fs-6" style="line-height: 1.5;">
-                                    {{ Str::limit($post->description, 85) }}
-                                </p>
+                                                {{-- Apartment Info --}}
+                                                <div class="row g-2 mb-2 small text-muted">
+                                                    <div class="col-6 col-lg-4 d-flex align-items-center">
+                                                        <i class="bi bi-geo-alt-fill text-danger me-2 fs-6"></i>
+                                                        <div>
+                                                            <small class="d-block">Location</small>
+                                                            <strong
+                                                                class="text-dark">{{ $post->apartment->location ?? 'N/A' }}</strong>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-6 col-lg-4 d-flex align-items-center">
+                                                        <i class="bi bi-cash-coin text-success me-2 fs-6"></i>
+                                                        <div>
+                                                            <small class="d-block">Rent</small>
+                                                            <strong class="text-dark">{{ $post->apartment->rent ?? 'N/A' }}
+                                                                JD</strong>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-6 col-lg-4 d-flex align-items-center">
+                                                        <i class="bi bi-person-badge text-primary me-2 fs-6"></i>
+                                                        <div>
+                                                            <small class="d-block">Landlord</small>
+                                                            <strong
+                                                                class="text-dark">{{ $post->apartment->landlord->name ?? 'N/A' }}</strong>
+                                                        </div>
+                                                    </div>
+                                                </div>
 
-                                {{-- Preferences --}}
-                                <div class="mb-4 pb-3 border-bottom">
-                                    <h6 class="fw-semibold text-dark mb-2">
-                                        <i class="bi bi-sliders text-primary me-2"></i>Preferences
-                                    </h6>
-                                    <div class="d-flex flex-wrap gap-2">
-                                        <span class="badge bg-info bg-opacity-10 text-info px-2 py-1 rounded-pill fs-6">
-                                            cleanliness <i class="bi bi-hand-thumbs-up me-1"></i>{{ $post->cleanliness_level }}
-                                        </span>
-                                        <span
-                                            class="badge bg-{{ $post->smoking ? 'danger' : 'success' }} bg-opacity-10 text-{{ $post->smoking ? 'danger' : 'success' }} px-2 py-1 rounded-pill fs-6">
-                                            {!! $post->smoking ? '&#128684;' : '&#128685;' !!} <!-- 🚬 or 🚭 -->
-                                            {{ $post->smoking ? 'Smoking' : 'No Smoking' }}
-                                        </span>
-
-
-                                    </div>
-                                </div>
-
-                                {{-- Apartment Info --}}
-                                <div class="mb-4">
-                                    <h6 class="fw-semibold text-dark mb-3">
-                                        <i class="bi bi-house-door text-primary me-2"></i>Apartment Details
-                                    </h6>
-                                    <div class="d-flex align-items-start mb-2">
-                                        <i class="bi bi-person-fill text-primary me-2 mt-1" style="font-size: 0.9rem;"></i>
-                                        <div>
-                                            <small class="text-muted d-block">Landlord</small>
-                                            <span class="text-dark fw-500">{{ $post->apartment->landlord->name ?? 'N/A' }}</span>
+                                                {{-- Action Buttons --}}
+                                                <div class="d-flex gap-2 mt-auto">
+                                                    <form action="{{ route('student.roommates.apply', $post->id) }}"
+                                                        method="POST">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-primary btn-sm px-3">
+                                                            <i class="bi bi-send me-1"></i>Apply
+                                                        </button>
+                                                    </form>
+                                                    <button type="button" class="btn btn-outline-secondary btn-sm">
+                                                        <i class="bi bi-eye"></i>
+                                                    </button>
+                                                    <button type="button" class="btn btn-outline-secondary btn-sm">
+                                                        <i class="bi bi-bookmark"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="d-flex align-items-start mb-2">
-                                        <i class="bi bi-geo-alt-fill text-primary me-2 mt-1" style="font-size: 0.9rem;"></i>
-                                        <div>
-                                            <small class="text-muted d-block">Address</small>
-                                            <span class="text-dark fw-500">{{ $post->apartment->location ?? 'N/A' }}</span>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex align-items-start">
-                                        <i class="bi bi-cash-coin text-primary me-2 mt-1" style="font-size: 0.9rem;"></i>
-                                        <div>
-                                            <small class="text-muted d-block">Monthly Rent</small>
-                                            <span class="text-dark fw-bold fs-5">{{ $post->apartment->rent ?? 'N/A' }} JD</span>
-                                        </div>
-                                    </div>
                                 </div>
-
-                                {{-- Apply Button --}}
-                                <form action="{{ route('student.roommates.apply', $post->id) }}" method="POST"
-                                    class="d-grid mt-auto">
-                                    @csrf
-                                    <button type="submit" class="btn btn-primary fw-semibold rounded-3 py-2">
-                                        <i class="bi bi-hand-index me-2"></i>Apply as Roommate
-                                    </button>
-                                </form>
                             </div>
-                        </div>
+                        @endforeach
                     </div>
                 @endforeach
             </div>
@@ -159,15 +194,16 @@
             {{-- Empty State --}}
             <div class="row">
                 <div class="col-12">
-                    <div class="card border-0 shadow-sm rounded-4 py-5 text-center">
+                    <div class="card shadow-sm border-0 text-center py-5">
                         <div class="card-body">
                             <i class="bi bi-inbox text-secondary mb-4" style="font-size: 4rem; opacity: 0.3;"></i>
-                            <h5 class="fw-bold text-dark mb-2">No Roommate Posts Found</h5>
-                            <p class="text-muted mb-4">There are currently no available roommate posts. Check back later or
-                                create your own post!</p>
-                            <a href="{{ route('student.roommates.create') }}"
-                                class="btn btn-primary px-4 rounded-3 fw-semibold">
-                                <i class="bi bi-pencil-square me-2"></i>Create Your Post
+                            <h4 class="fw-bold mb-3">No Roommate Posts Yet</h4>
+                            <p class="text-muted mb-4">
+                                There are currently no available roommate posts.<br>
+                                Be the first to create one and find your perfect roommate!
+                            </p>
+                            <a href="{{ route('student.roommates.create') }}" class="btn btn-primary btn-lg px-5">
+                                <i class="bi bi-plus-circle me-2"></i>Create Your First Post
                             </a>
                         </div>
                     </div>
@@ -176,4 +212,14 @@
         @endif
 
     </div>
+    <style>
+        .transition-hover {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .transition-hover:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+    </style>
 @endsection

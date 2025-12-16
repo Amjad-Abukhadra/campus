@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Application;
 use App\Models\Roommate;
 use App\Models\RoommatePost;
 use Illuminate\Http\Request;
@@ -138,6 +139,8 @@ class RoommateController extends Controller
 
         return back()->with('success', 'Post updated successfully.');
     }
-
+    public function myApplications() {
+        $applications = Roommate::where('std_id',Auth::id())->latest()->get();
+        return view('student.roommates.my_applications', compact('applications'));
+    }
 }
-

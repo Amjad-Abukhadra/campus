@@ -81,7 +81,7 @@
 
                     <div class="text-center mt-4">
                         <p class="mb-0">Don't have an account?
-                            <a href="#" class="text-dark fw-semibold text-decoration-none">Sign Up</a>
+                            <a href="{{route('register')}}" class="text-dark fw-semibold text-decoration-none">Sign Up</a>
                         </p>
                     </div>
                 </form>

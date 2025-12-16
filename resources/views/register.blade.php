@@ -28,7 +28,9 @@
             <!-- Left Side -->
             <div
                 class="col-md-5 d-none d-md-flex flex-column justify-content-center align-items-center text-white bg-dark p-7">
-                <h2 class="fw-bold">Create Account</h2>
+                <h2 class="fw-bold">Create Account </h2>
+                <h2 class="fw-bold">For LandLord </h2>
+
                 <p class="mt-2 text-center">Join Campus Mate to manage your profile and stay connected.</p>
             </div>
 
@@ -86,7 +88,7 @@
 
                     <div class="text-center mt-3">
                         <p class="mb-0">Already have an account?
-                            <a href="#" class="text-dark fw-semibold text-decoration-none">Login</a>
+                            <a href="{{route('login')}}" class="text-dark fw-semibold text-decoration-none">Login</a>
                         </p>
                     </div>
                 </form>
