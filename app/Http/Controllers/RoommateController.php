@@ -11,11 +11,29 @@ use Illuminate\Support\Facades\Auth;
 class RoommateController extends Controller
 {
     // SHOW ALL ROOMMATE POSTS
-    public function index()
+    public function index(Request $request)
     {
-        $posts = RoommatePost::with(['student', 'apartment', 'roommates'])
-            ->where('is_open', true)
-            ->latest()
+        $query = RoommatePost::with(['student', 'apartment', 'roommates'])
+            ->where('is_open', true);
+
+        // Filters for Apartment Location and Price
+        if ($request->filled('location')) {
+            $query->whereHas('apartment', function ($q) use ($request) {
+                $q->where('location', 'like', '%' . $request->location . '%');
+            });
+        }
+        if ($request->filled('min_price')) {
+            $query->whereHas('apartment', function ($q) use ($request) {
+                $q->where('rent', '>=', $request->min_price);
+            });
+        }
+        if ($request->filled('max_price')) {
+            $query->whereHas('apartment', function ($q) use ($request) {
+                $q->where('rent', '<=', $request->max_price);
+            });
+        }
+
+        $posts = $query->latest()
             ->get()
             ->filter(function ($post) {
                 return $post->acceptedCount() < $post->max_roommates;
@@ -48,15 +66,42 @@ class RoommateController extends Controller
 
         $accepted = $student->applications()->where('status', 'accepted')->first();
 
-        RoommatePost::create([
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'max_roommates' => 'required|integer|min:1|max:10',
+            'preferences' => 'nullable|array',
+            'preferences.*.name' => 'nullable|string|max:255',
+            'preferences.*.description' => 'nullable|string|max:255',
+        ]);
+
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'max_roommates' => 'required|integer|min:1|max:10',
+            'preferences' => 'nullable|array',
+            'preferences.*.name' => 'nullable|string|max:255',
+            'preferences.*.description' => 'nullable|string|max:255',
+        ]);
+
+        $post = RoommatePost::create([
             'std_id' => $student->id,
             'apartment_id' => $accepted->apartment_id,
             'title' => $request->title,
             'description' => $request->description,
-            'cleanliness_level' => $request->cleanliness,
-            'smoking' => $request->smoking ?? 0,
-            'max_roommates' => $request->max_roommates ?? 1,
+            'max_roommates' => $request->max_roommates,
         ]);
+
+        if ($request->has('preferences')) {
+            foreach ($request->preferences as $pref) {
+                if (!empty($pref['name'])) {
+                    $post->preferences()->create([
+                        'name' => $pref['name'],
+                        'description' => $pref['description'] ?? null,
+                    ]);
+                }
+            }
+        }
 
         return redirect()->route('student.roommates.index')->with('success', 'Roommate post created.');
     }
@@ -129,18 +174,40 @@ class RoommateController extends Controller
     }
     public function updatePost(Request $request, RoommatePost $post)
     {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'max_roommates' => 'required|integer|min:1|max:10',
+            'preferences' => 'nullable|array',
+            'preferences.*.name' => 'nullable|string|max:255',
+            'preferences.*.description' => 'nullable|string|max:255',
+        ]);
+
         $post->update([
             'title' => $request->title,
             'description' => $request->description,
-            'cleanliness_level' => $request->cleanliness,
-            'smoking' => $request->smoking ?? 0,
             'max_roommates' => $request->max_roommates,
         ]);
 
+        // Sync preferences: delete old and create new
+        $post->preferences()->delete();
+
+        if ($request->has('preferences')) {
+            foreach ($request->preferences as $pref) {
+                if (!empty($pref['name'])) {
+                    $post->preferences()->create([
+                        'name' => $pref['name'],
+                        'description' => $pref['description'] ?? null,
+                    ]);
+                }
+            }
+        }
+
         return back()->with('success', 'Post updated successfully.');
     }
-    public function myApplications() {
-        $applications = Roommate::where('std_id',Auth::id())->latest()->get();
+    public function myApplications()
+    {
+        $applications = Roommate::where('std_id', Auth::id())->latest()->get();
         return view('student.roommates.my_applications', compact('applications'));
     }
 }

@@ -55,8 +55,40 @@
 
                                 <div class="mb-3">
                                     <label class="form-label small fw-semibold">Phone Number</label>
-                                    <input type="text" name="phone_number" value="{{ $student->phone_number }}" class="form-control"
-                                        required>
+                                    <input type="text" name="phone_number" value="{{ $student->phone_number }}"
+                                        class="form-control" required>
+                                </div>
+
+                                {{-- Gender --}}
+                                <div class="mb-3">
+                                    <label class="form-label small fw-semibold">Gender</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light"><i
+                                                class="bi bi-gender-ambiguous"></i></span>
+                                        <select name="gender" class="form-select" required>
+                                            <option value="" disabled {{ !$student->gender ? 'selected' : '' }}>Select
+                                                Gender</option>
+                                            <option value="male" {{ $student->gender == 'male' ? 'selected' : '' }}>Male
+                                            </option>
+                                            <option value="female" {{ $student->gender == 'female' ? 'selected' : '' }}>Female
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                {{-- Date of Birth --}}
+                                <x-form-datepicker name="date_of_birth" label="Date of Birth"
+                                    :value="$student->date_of_birth" :required="true" />
+
+
+                                {{-- Major --}}
+                                <div class="mb-3">
+                                    <label class="form-label small fw-semibold">Major</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light"><i class="bi bi-mortarboard"></i></span>
+                                        <input type="text" name="major" value="{{ $student->major }}" class="form-control"
+                                            placeholder="Enter your major">
+                                    </div>
                                 </div>
                                 {{-- Email --}}
                                 <div class="mb-3">
@@ -110,7 +142,7 @@
                                     @endif
                                     <span
                                         class="position-absolute top-0 end-0 m-3 badge 
-                                                    {{ $application->status === 'accepted' ? 'bg-success' : ($application->status === 'pending' ? 'bg-warning text-dark' : 'bg-danger') }}">
+                                                                            {{ $application->status === 'accepted' ? 'bg-success' : ($application->status === 'pending' ? 'bg-warning text-dark' : 'bg-danger') }}">
                                         {{ ucfirst($application->status) }}
                                     </span>
                                 </div>

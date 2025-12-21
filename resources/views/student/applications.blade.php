@@ -75,15 +75,79 @@
                                 </div>
 
                                 {{-- Application Date --}}
-                                <div class="d-flex align-items-center mb-4">
+                                <div class="d-flex align-items-center mb-3">
                                     <i class="bi bi-calendar-event text-primary me-2" style="font-size: 1.1rem;"></i>
                                     <span class="text-muted fs-6">
                                         Applied: {{ $app->created_at->format('M d, Y') }}
                                     </span>
                                 </div>
 
+                                {{-- Payment Status --}}
+                                @if($app->status === 'accepted')
+                                    <div class="mb-3 p-3 bg-light rounded-3">
+                                        @if($app->payment_status === 'unpaid')
+                                            <div class="d-flex align-items-center mb-2">
+                                                <i class="bi bi-exclamation-circle text-warning me-2"></i>
+                                                <span class="text-muted small">Payment Required</span>
+                                            </div>
+                                        @elseif($app->payment_status === 'paid')
+                                            <div class="d-flex align-items-center mb-2">
+                                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                                <span class="text-success small fw-bold">Paid</span>
+                                            </div>
+                                            <div class="text-muted small">
+                                                <div>Amount: <strong>{{ $app->payment_amount }} JD</strong></div>
+                                                <div>Paid: {{ $app->paid_at->format('M d, Y') }}</div>
+                                                @if($app->canCancel())
+                                                    <div class="text-warning mt-1">
+                                                        <i class="bi bi-clock me-1"></i>
+                                                        Cancel by: {{ $app->cancellation_deadline->format('M d, h:i A') }}
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        @elseif($app->payment_status === 'refunded')
+                                            <div class="d-flex align-items-center">
+                                                <i class="bi bi-arrow-counterclockwise text-info me-2"></i>
+                                                <span class="text-info small fw-bold">Refunded</span>
+                                            </div>
+                                        @endif
+                                    </div>
+                                @endif
+
                                 {{-- Action Buttons --}}
                                 <div class="d-grid gap-2">
+                                    @if($app->status === 'accepted' && $app->payment_status === 'unpaid')
+                                        <a href="{{ route('student.payment.initiate', $app->id) }}"
+                                            class="btn btn-success fw-semibold rounded-3 py-2">
+                                            <i class="bi bi-credit-card me-2"></i>Pay Now
+                                        </a>
+                                    @elseif($app->status === 'accepted' && $app->canCancel())
+                                        <form action="{{ route('student.payment.cancel', $app->id) }}" method="POST"
+                                            onsubmit="return confirm('Are you sure you want to cancel and refund this payment?');">
+                                            @csrf
+                                            <button type="submit" class="btn btn-warning fw-semibold rounded-3 py-2 w-100">
+                                                <i class="bi bi-x-circle me-2"></i>Cancel & Refund
+                                            </button>
+                                        </form>
+                                    @endif
+
+                                    {{-- Review Button for Paid Apartments --}}
+                                    @if($app->isPaid())
+                                        @php
+                                            $hasReviewed = $app->apartment->reviews->where('student_id', Auth::id())->count() > 0;
+                                        @endphp
+                                        @if(!$hasReviewed)
+                                            <button type="button" class="btn btn-info fw-semibold rounded-3 py-2" data-bs-toggle="modal"
+                                                data-bs-target="#reviewModal{{ $app->id }}">
+                                                <i class="bi bi-star me-2"></i>Rate Apartment
+                                            </button>
+                                        @else
+                                            <button class="btn btn-outline-success fw-semibold rounded-3 py-2" disabled>
+                                                <i class="bi bi-check-circle me-2"></i>Already Reviewed
+                                            </button>
+                                        @endif
+                                    @endif
+
                                     <a class="btn btn-outline-primary fw-semibold rounded-3 py-2">
                                         <i class="bi bi-eye me-2"></i>View Apartment
                                     </a>
@@ -116,6 +180,48 @@
 
     </div>
 
+    {{-- Review Modals --}}
+    @if($applications->count() > 0)
+        @foreach ($applications as $app)
+            @if($app->isPaid())
+                <div class="modal fade" id="reviewModal{{ $app->id }}" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Rate {{ $app->apartment->title }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <form action="{{ route('student.reviews.store', $app->apartment->id) }}" method="POST">
+                                @csrf
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Rating</label>
+                                        <div class="star-rating">
+                                            @for($i = 5; $i >= 1; $i--)
+                                                <input type="radio" id="star{{ $i }}-{{ $app->id }}" name="rating" value="{{ $i }}"
+                                                    required />
+                                                <label for="star{{ $i }}-{{ $app->id }}">★</label>
+                                            @endfor
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Comment (Optional)</label>
+                                        <textarea name="comment" class="form-control" rows="4"
+                                            placeholder="Share your experience..."></textarea>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <button type="submit" class="btn btn-primary">Submit Review</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            @endif
+        @endforeach
+    @endif
+
     <style>
         .card:hover {
             transform: translateY(-8px);
@@ -135,6 +241,29 @@
             .card-body {
                 padding: 1.25rem !important;
             }
+        }
+
+        /* Star Rating Styles */
+        .star-rating {
+            direction: rtl;
+            display: inline-flex;
+            font-size: 2rem;
+        }
+
+        .star-rating input[type="radio"] {
+            display: none;
+        }
+
+        .star-rating label {
+            color: #ddd;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .star-rating label:hover,
+        .star-rating label:hover~label,
+        .star-rating input[type="radio"]:checked~label {
+            color: #ffc107;
         }
     </style>
 @endsection

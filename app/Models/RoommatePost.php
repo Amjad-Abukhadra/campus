@@ -14,11 +14,20 @@ class RoommatePost extends Model
         'apartment_id',
         'title',
         'description',
-        'cleanliness_level',
-        'smoking',
         'max_roommates',
         'is_open',
     ];
+
+    public function favorites()
+    {
+        return $this->morphMany(Favorite::class, 'favoritable');
+    }
+
+    public function preferences()
+    {
+        return $this->hasMany(Preference::class);
+    }
+
     public function student()
     {
         return $this->belongsTo(User::class, 'std_id');

@@ -24,7 +24,10 @@ class User extends Authenticatable implements LaratrustUser
         'email',
         'password',
         'image',
-        'phone_number'
+        'phone_number',
+        'gender',
+        'date_of_birth',
+        'major',
     ];
 
     /**
@@ -47,11 +50,16 @@ class User extends Authenticatable implements LaratrustUser
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'date_of_birth' => 'date',
         ];
     }
     public function apartments()
     {
         return $this->hasMany(Apartment::class, 'landlord_id');
+    }
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class);
     }
     public function applications()
     {

@@ -73,28 +73,88 @@
                         @enderror
                     </div>
 
-                    {{-- Cleanliness --}}
+                    {{-- Dynamic Preferences Section --}}
                     <div class="mb-4">
-                        <label for="cleanliness" class="form-label fw-semibold mb-2">
-                            <i class="bi bi-hand-thumbs-up text-primary me-2"></i>Cleanliness Level
+                        <label class="form-label fw-semibold mb-2">
+                            <i class="bi bi-list-stars text-primary me-2"></i>Preferences
                         </label>
-                        <select id="cleanliness"
-                            name="cleanliness" 
-                            class="form-select form-select-lg rounded-3 @error('cleanliness') is-invalid @enderror"
-                            required>
-                            <option value="" selected disabled>Select cleanliness preference...</option>
-                            <option value="5" {{ old('cleanliness') == '5' ? 'selected' : '' }}>Very Clean</option>
-                            <option value="4" {{ old('cleanliness') == '4' ? 'selected' : '' }}>Clean</option>
-                            <option value="3" {{ old('cleanliness') == '3' ? 'selected' : '' }}>Moderate</option>
-                            <option value="2" {{ old('cleanliness') == '2' ? 'selected' : '' }}>Relaxed</option>
-                            <option value="1" {{ old('cleanliness') == '1' ? 'selected' : '' }}>Dirty</option>
-                        </select>
-                        @error('cleanliness')
-                            <div class="invalid-feedback d-block">
-                                <i class="bi bi-exclamation-circle me-1"></i>{{ $message }}
-                            </div>
-                        @enderror
+                        <p class="text-muted small mb-2">Add preferences for your potential roommate (e.g., "Non-smoker", "Quiet hours after 10 PM", "Cleanliness level").</p>
+                        
+                        <div id="preferences-container">
+                            {{-- Initial Empty State or Old Inputs (if any validation failed) --}}
+                            @if(old('preferences'))
+                                @foreach(old('preferences') as $index => $pref)
+                                    <div class="preference-item card mb-3 bg-light border-0">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <h6 class="card-title mb-0">Preference #{{ $index + 1 }}</h6>
+                                                <button type="button" class="btn btn-sm btn-outline-danger remove-preference">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </div>
+                                            <div class="mb-2">
+                                                <input type="text" name="preferences[{{ $index }}][name]" class="form-control form-control-sm" placeholder="Preference Name (e.g. Non-smoker)" value="{{ $pref['name'] }}" required>
+                                            </div>
+                                            <div>
+                                                <input type="text" name="preferences[{{ $index }}][description]" class="form-control form-control-sm" placeholder="Description (Optional)" value="{{ $pref['description'] }}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            @endif
+                        </div>
+
+                        <button type="button" id="add-preference-btn" class="btn btn-outline-primary btn-sm mt-2">
+                            <i class="bi bi-plus-circle me-1"></i> Add Preference
+                        </button>
                     </div>
+
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const container = document.getElementById('preferences-container');
+                            const addBtn = document.getElementById('add-preference-btn');
+                            let preferenceCount = {{ old('preferences') ? count(old('preferences')) : 0 }};
+
+                            addBtn.addEventListener('click', function() {
+                                const index = preferenceCount++;
+                                const template = `
+                                    <div class="preference-item card mb-3 bg-light border-0 fade-in">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <h6 class="card-title mb-0">Preference #` + (index + 1) + `</h6>
+                                                <button type="button" class="btn btn-sm btn-outline-danger remove-preference">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </div>
+                                            <div class="mb-2">
+                                                <input type="text" name="preferences[` + index + `][name]" class="form-control form-control-sm" placeholder="Preference Name (e.g. Non-smoker)" required>
+                                            </div>
+                                            <div>
+                                                <input type="text" name="preferences[` + index + `][description]" class="form-control form-control-sm" placeholder="Description (Optional)">
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                                container.insertAdjacentHTML('beforeend', template);
+                            });
+
+                            container.addEventListener('click', function(e) {
+                                if (e.target.closest('.remove-preference')) {
+                                    e.target.closest('.preference-item').remove();
+                                }
+                            });
+                        });
+                    </script>
+
+                    <style>
+                        .fade-in {
+                            animation: fadeIn 0.3s ease-in-out;
+                        }
+                        @keyframes fadeIn {
+                            from { opacity: 0; transform: translateY(10px); }
+                            to { opacity: 1; transform: translateY(0); }
+                        }
+                    </style>
 
                     {{-- Max Roommates --}}
                     <div class="mb-4">
@@ -117,20 +177,7 @@
                         @enderror
                     </div>
 
-                    {{-- Smoking --}}
-                    <div class="mb-4 p-3 bg-light rounded-3 border border-1">
-                        <div class="form-check">
-                            <input class="form-check-input" 
-                                type="checkbox" 
-                                id="smoking"
-                                name="smoking" 
-                                value="1"
-                                {{ old('smoking') ? 'checked' : '' }}>
-                            <label class="form-check-label fw-semibold" for="smoking">
-                                <i class="bi bi-cigarette text-danger me-2"></i>Is Smoking Allowed?
-                            </label>
-                        </div>
-                    </div>
+
 
                     {{-- Buttons --}}
                     <div class="d-grid gap-2 d-md-flex justify-content-end">

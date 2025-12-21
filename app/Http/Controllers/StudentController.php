@@ -25,6 +25,9 @@ class StudentController extends Controller
             'name' => 'required|string|max:255',
             'phone_number' => 'nullable|string|max:20',
             'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'gender' => 'required|in:male,female',
+            'date_of_birth' => 'required|date',
+            'major' => 'nullable|string|max:255',
         ]);
         if ($request->hasFile('image')) {
             if ($student->image && Storage::disk('public')->exists('students/' . $student->image)) {
@@ -35,11 +38,14 @@ class StudentController extends Controller
         }
         $student->name = $request->name;
         $student->phone_number = $request->phone_number;
+        $student->gender = $request->gender;
+        $student->date_of_birth = $request->date_of_birth;
+        $student->major = $request->major;
         $student->save();
 
         return redirect()->back()->with('success', 'Profile updated successfully!');
     }
-    public function apartments()
+    public function apartments(Request $request)
     {
         $student = Auth::user();
 
@@ -48,9 +54,21 @@ class StudentController extends Controller
             ->pluck('apartment_id')
             ->toArray();
 
-        $apartments = Apartment::with('landlord')
-            ->whereNotIn('id', $acceptedApartmentIds)
-            ->get();
+        $query = Apartment::with(['landlord', 'reviews'])
+            ->whereNotIn('id', $acceptedApartmentIds);
+
+        // Filters
+        if ($request->filled('location')) {
+            $query->where('location', 'like', '%' . $request->location . '%');
+        }
+        if ($request->filled('min_price')) {
+            $query->where('rent', '>=', $request->min_price);
+        }
+        if ($request->filled('max_price')) {
+            $query->where('rent', '<=', $request->max_price);
+        }
+
+        $apartments = $query->get();
 
         $applicationsStatus = $student->applications()
             ->whereIn('status', ['pending', 'rejected'])
@@ -60,6 +78,7 @@ class StudentController extends Controller
         return view('student.apartments', [
             'apartments' => $apartments,
             'applications' => $applicationsStatus,
+            'student' => $student,
         ]);
     }
 
@@ -80,7 +99,7 @@ class StudentController extends Controller
     }
     public function applications()
     {
-        $applications = Application::with('apartment')
+        $applications = Application::with(['apartment.reviews', 'apartment.landlord'])
             ->where('std_id', Auth::id())
             ->get();
 
@@ -96,5 +115,5 @@ class StudentController extends Controller
         return view('student.landlord-profile', compact('landlord', 'apartments'));
     }
 
-    
+
 }

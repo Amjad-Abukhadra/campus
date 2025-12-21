@@ -42,8 +42,7 @@
                                 {{-- Image upload --}}
                                 <div class="mb-3">
                                     <label class="form-label small fw-semibold">Profile Image</label>
-                                    <input type="file" name="image" class="form-control form-control-sm"
-                                        accept="image/*">
+                                    <input type="file" name="image" class="form-control form-control-sm" accept="image/*">
                                 </div>
 
                                 {{-- Name --}}
@@ -59,6 +58,28 @@
                                     <input type="text" name="phone_number" value="{{ $landlord->phone_number }}"
                                         class="form-control" required>
                                 </div>
+
+                                {{-- Gender --}}
+                                <div class="mb-3">
+                                    <label class="form-label small fw-semibold">Gender</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light"><i
+                                                class="bi bi-gender-ambiguous"></i></span>
+                                        <select name="gender" class="form-select" required>
+                                            <option value="" disabled {{ !$landlord->gender ? 'selected' : '' }}>Select
+                                                Gender</option>
+                                            <option value="male" {{ $landlord->gender == 'male' ? 'selected' : '' }}>Male
+                                            </option>
+                                            <option value="female" {{ $landlord->gender == 'female' ? 'selected' : '' }}>
+                                                Female</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                {{-- Date of Birth --}}
+                                <x-form-datepicker name="date_of_birth" label="Date of Birth"
+                                    :value="$landlord->date_of_birth" :required="true" />
+
 
                                 <div class="d-grid gap-2">
                                     <button type="submit" class="btn btn-primary">
@@ -98,9 +119,8 @@
                             <div class="card h-100 shadow-sm border-0 hover-lift transition">
                                 @if ($apartment->image)
                                     <div class="position-relative overflow-hidden">
-                                        <img src="{{ asset('storage/apartments/' . $apartment->image) }}"
-                                            class="card-img-top" alt="Apartment Image"
-                                            style="height: 220px; transition: transform 0.3s;">
+                                        <img src="{{ asset('storage/apartments/' . $apartment->image) }}" class="card-img-top"
+                                            alt="Apartment Image" style="height: 220px; transition: transform 0.3s;">
                                         <span class="position-absolute top-0 end-0 m-3 badge bg-primary">
                                             {{ $apartment->rent }} JD/month
                                         </span>
@@ -146,6 +166,102 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- ================= VIEW MODAL ================= -->
+                        <div class="modal fade" id="viewApartmentModal{{ $apartment->id }}" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-lg modal-dialog-centered">
+                                <div class="modal-content shadow-lg border-0">
+                                    <div class="modal-header bg-primary text-white">
+                                        <h5 class="modal-title">
+                                            <i class="bi bi-eye me-2"></i> {{ $apartment->title }}
+                                        </h5>
+                                        <button type="button" class="btn-close btn-close-white"
+                                            data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row align-items-center">
+                                            {{-- Left: Image --}}
+                                            @if ($apartment->image)
+                                                <div class="col-md-5 text-center mb-3 mb-md-0">
+                                                    <img src="{{ asset('storage/apartments/' . $apartment->image) }}"
+                                                        class="img-fluid rounded" alt="Apartment Image"
+                                                        style="max-height: 250px; object-fit: cover;">
+                                                </div>
+                                            @endif
+
+                                            {{-- Right: Info --}}
+                                            <div class="col-md-7">
+                                                <p class="fs-5"><strong>Location:</strong> {{ $apartment->location }}</p>
+                                                <p class="fs-5"><strong>Rent:</strong> {{ $apartment->rent }} JD/month</p>
+                                                <p class="fs-5"><strong>Description:</strong></p>
+                                                <p class="fs-6 text-muted">{{ $apartment->description }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer justify-content-center">
+                                        <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ================= EDIT MODAL ================= -->
+                        <div class="modal fade" id="editApartmentModal{{ $apartment->id }}" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-lg modal-dialog-centered">
+                                <div class="modal-content shadow-lg border-0">
+                                    <div class="modal-header bg-secondary text-white">
+                                        <h5 class="modal-title">
+                                            <i class="bi bi-pencil-square me-2"></i> Edit Apartment
+                                        </h5>
+                                        <button type="button" class="btn-close btn-close-white"
+                                            data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <form action="{{ route('apartments.update', $apartment->id) }}" method="POST"
+                                        enctype="multipart/form-data">
+                                        @csrf
+                                        @method('PUT')
+
+                                        <div class="modal-body">
+                                            <div class="row g-3">
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Title</label>
+                                                    <input type="text" name="title" value="{{ $apartment->title }}"
+                                                        class="form-control" required>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Rent (JD/month)</label>
+                                                    <input type="number" name="rent" value="{{ $apartment->rent }}"
+                                                        class="form-control" required>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <label class="form-label">Location</label>
+                                                    <input type="text" name="location" value="{{ $apartment->location }}"
+                                                        class="form-control" required>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <label class="form-label">Description</label>
+                                                    <textarea name="description" class="form-control"
+                                                        rows="3">{{ $apartment->description }}</textarea>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <label class="form-label">Image</label>
+                                                    @if ($apartment->image)
+                                                        <img src="{{ asset('storage/apartments/' . $apartment->image) }}"
+                                                            width="100" class="rounded mb-2 d-block">
+                                                    @endif
+                                                    <input type="file" name="image" class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="modal-footer">
+                                            <button class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                     @empty
                         <div class="col-12">
                             <div class="card shadow-sm border-0 text-center py-5">
@@ -161,101 +277,6 @@
             </div>
         </div>
     </div>
-    <!-- ================= VIEW MODAL ================= -->
-    <div class="modal fade" id="viewApartmentModal{{ $apartment->id }}" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content shadow-lg border-0">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title">
-                        <i class="bi bi-eye me-2"></i> {{ $apartment->title }}
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row align-items-center">
-                        {{-- Left: Image --}}
-                        @if ($apartment->image)
-                            <div class="col-md-5 text-center mb-3 mb-md-0">
-                                <img src="{{ asset('storage/apartments/' . $apartment->image) }}"
-                                    class="img-fluid rounded" alt="Apartment Image"
-                                    style="max-height: 250px; object-fit: cover;">
-                            </div>
-                        @endif
-
-                        {{-- Right: Info --}}
-                        <div class="col-md-7">
-                            <p class="fs-5"><strong>Location:</strong> {{ $apartment->location }}</p>
-                            <p class="fs-5"><strong>Rent:</strong> {{ $apartment->rent }} JD/month</p>
-                            <p class="fs-5"><strong>Description:</strong></p>
-                            <p class="fs-6 text-muted">{{ $apartment->description }}</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer justify-content-center">
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-
-    <!-- ================= EDIT MODAL ================= -->
-    <div class="modal fade" id="editApartmentModal{{ $apartment->id }}" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content shadow-lg border-0">
-                <div class="modal-header bg-secondary text-white">
-                    <h5 class="modal-title">
-                        <i class="bi bi-pencil-square me-2"></i> Edit Apartment
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <form action="{{ route('apartments.update', $apartment->id) }}" method="POST"
-                    enctype="multipart/form-data">
-                    @csrf
-                    @method('PUT')
-
-                    <div class="modal-body">
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Title</label>
-                                <input type="text" name="title" value="{{ $apartment->title }}"
-                                    class="form-control" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Rent (JD/month)</label>
-                                <input type="number" name="rent" value="{{ $apartment->rent }}"
-                                    class="form-control" required>
-                            </div>
-                            <div class="col-md-12">
-                                <label class="form-label">Location</label>
-                                <input type="text" name="location" value="{{ $apartment->location }}"
-                                    class="form-control" required>
-                            </div>
-                            <div class="col-md-12">
-                                <label class="form-label">Description</label>
-                                <textarea name="description" class="form-control" rows="3">{{ $apartment->description }}</textarea>
-                            </div>
-                            <div class="col-md-12">
-                                <label class="form-label">Image</label>
-                                @if ($apartment->image)
-                                    <img src="{{ asset('storage/apartments/' . $apartment->image) }}" width="100"
-                                        class="rounded mb-2 d-block">
-                                @endif
-                                <input type="file" name="image" class="form-control">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="modal-footer">
-                        <button class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Save Changes</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
     <style>
         .hover-lift {
             transition: transform 0.3s ease, box-shadow 0.3s ease;

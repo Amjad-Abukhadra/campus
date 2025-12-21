@@ -155,9 +155,21 @@
                                                                     {{ $application->student->name }}</p>
                                                                 <p class="mb-1"><strong>Email:</strong>
                                                                     {{ $application->student->email }}</p>
-                                                                @if ($application->student->phone_number)
+                                                            @if ($application->student->phone_number)
                                                                     <p class="mb-0"><strong>Phone:</strong>
                                                                         {{ $application->student->phone_number }}</p>
+                                                                @endif
+                                                                @if ($application->student->gender)
+                                                                    <p class="mb-1"><strong>Gender:</strong>
+                                                                        {{ ucfirst($application->student->gender) }}</p>
+                                                                @endif
+                                                                @if ($application->student->date_of_birth)
+                                                                    <p class="mb-1"><strong>Date of Birth:</strong>
+                                                                        {{ $application->student->date_of_birth->format('F j, Y') }}</p>
+                                                                @endif
+                                                                @if ($application->student->major)
+                                                                    <p class="mb-1"><strong>Major:</strong>
+                                                                        {{ $application->student->major }}</p>
                                                                 @endif
                                                             </div>
 

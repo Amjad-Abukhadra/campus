@@ -75,11 +75,15 @@ class LandlordController extends Controller
             'name' => 'required|string|max:255',
             'phone_number' => 'required|string|max:20',
             'image' => 'nullable|image|max:2048',
+            'gender' => 'required|in:male,female',
+            'date_of_birth' => 'required|date',
         ]);
 
         // Update name and phone
         $landlord->name = $request->name;
         $landlord->phone_number = $request->phone_number;
+        $landlord->gender = $request->gender;
+        $landlord->date_of_birth = $request->date_of_birth;
 
         // If a new image is uploaded
         if ($request->hasFile('image')) {

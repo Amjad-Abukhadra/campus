@@ -35,6 +35,20 @@
                                 </div>
                             @endif
 
+                            @if ($landlord->gender)
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="bi bi-gender-ambiguous text-primary" style="font-size: 1.1rem;"></i>
+                                    <span class="text-dark">{{ ucfirst($landlord->gender) }}</span>
+                                </div>
+                            @endif
+
+                            @if ($landlord->date_of_birth)
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="bi bi-calendar-event text-primary" style="font-size: 1.1rem;"></i>
+                                    <span class="text-dark">{{ $landlord->date_of_birth->format('F j, Y') }}</span>
+                                </div>
+                            @endif
+
                             <div>
                                 <span
                                     class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill fw-semibold">

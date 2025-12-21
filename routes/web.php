@@ -58,8 +58,19 @@ Route::group(['middleware' => ['role:student'], 'prefix' => 'student'], function
     Route::get('/roommates', [RoommateController::class, 'index'])->name('student.roommates.index');
     Route::get('/roommates/create', [RoommateController::class, 'create'])->name('student.roommates.create');
     Route::post('/roommates/store', [RoommateController::class, 'store'])->name('student.roommates.store');
+    Route::post('/favorites/toggle', [App\Http\Controllers\FavoriteController::class, 'toggle'])->name('student.favorites.toggle');
+    Route::get('/saved-items', [App\Http\Controllers\FavoriteController::class, 'index'])->name('student.favorites.index');
     Route::get('/roommates/my-posts', [RoommateController::class, 'myPosts'])->name('student.roommates.myPosts');
 
+    // PAYMENT ROUTES
+    Route::get('/payment/initiate/{application}', [App\Http\Controllers\PaymentController::class, 'initiate'])->name('student.payment.initiate');
+    Route::post('/payment/execute/{application}', [App\Http\Controllers\PaymentController::class, 'execute'])->name('student.payment.execute');
+    Route::get('/payment/success/{application}', [App\Http\Controllers\PaymentController::class, 'success'])->name('student.payment.success');
+    Route::post('/payment/cancel/{application}', [App\Http\Controllers\PaymentController::class, 'cancel'])->name('student.payment.cancel');
+
+    // REVIEW ROUTES
+    Route::post('/apartments/{apartment}/review', [App\Http\Controllers\ReviewController::class, 'store'])->name('student.reviews.store');
+    Route::get('/apartments/{apartment}/reviews', [App\Http\Controllers\ReviewController::class, 'index'])->name('student.reviews.index');
     // APPLY TO BE ROOMMATE
     Route::post('/roommates/{post}/apply', [RoommateController::class, 'apply'])->name('student.roommates.apply');
 
