@@ -6,9 +6,15 @@
         <div class="container">
 
             <!-- Header -->
-            <div class="mb-4">
-                <h1 class="fw-bold mb-2">Applications</h1>
-            </div>
+            <x-page-header 
+                title="Applications" 
+                subtitle="View and manage property rental requests"
+                icon="bi bi-file-earmark-text"
+                :breadcrumb="[
+                    ['label' => 'Dashboard', 'link' => route('dashboard')],
+                    ['label' => 'Applications']
+                ]"
+            />
 
             <!-- Applications Table Card -->
             <div class="card border-0 shadow-sm">

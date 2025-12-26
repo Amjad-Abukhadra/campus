@@ -3,14 +3,11 @@
 @section('content')
     <div class="container-lg py-5">
         {{-- Header Section --}}
-        <div class="mb-5">
-            <h1 class="fw-bold text-dark mb-2">
-                <i class="bi bi-file-earmark-check text-primary me-2"></i>My Applications
-            </h1>
-            <p class="text-muted fs-6">Track and manage your apartment applications</p>
-            <hr class="border-primary border-3 w-25 opacity-50">
-        </div>
-
+        <x-page-header title="My Applications" subtitle="Track and manage your apartment applications and payments"
+            icon="bi bi-send-check" :breadcrumb="[
+            ['label' => 'Apartments', 'link' => route('student.apartments')],
+            ['label' => 'My Applications']
+        ]" />
         {{-- Applications Grid --}}
         @if($applications->count() > 0)
             <div class="row g-4">

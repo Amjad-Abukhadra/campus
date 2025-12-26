@@ -2,8 +2,11 @@
 
 @section('content')
     <div class="container py-5">
-        <h2 class="mb-4 text-primary fw-bold">Available Apartments</h2>
-        <p class="text-muted mb-4">Browse through apartments and apply for the ones you like.</p>
+        <x-page-header title="Browse Apartments" subtitle="Find your next home on campus and apply for your favorite ones"
+            icon="bi bi-search" :breadcrumb="[
+            ['label' => 'Home', 'link' => url('/')],
+            ['label' => 'Apartments']
+        ]" />
 
         {{-- Filters --}}
         <div class="card shadow-sm border-0 rounded-4 mb-4">
@@ -76,7 +79,7 @@
                             @endif
                             {{-- Rent Badge --}}
                             <span class="position-absolute top-0 end-0 bg-primary text-white px-3 py-1 
-                                                             rounded-pill fw-bold shadow-sm m-2">
+                                                                             rounded-pill fw-bold shadow-sm m-2">
                                 {{ $apartment->rent }} JD/mo
                             </span>
 
@@ -137,9 +140,9 @@
                                 @if ($status)
                                     <button
                                         class="btn 
-                                                                                                                                                @if ($status == 'pending') btn-warning
-                                                                                                                                                @elseif($status == 'approved') btn-success
-                                                                                                                                                @else btn-danger @endif w-100"
+                                                                                                                                                                        @if ($status == 'pending') btn-warning
+                                                                                                                                                                        @elseif($status == 'approved') btn-success
+                                                                                                                                                                        @else btn-danger @endif w-100"
                                         disabled>
                                         {{ ucfirst($status) }}
                                     </button>

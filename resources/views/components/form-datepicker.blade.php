@@ -9,7 +9,7 @@
                value="{{ $value }}" 
                class="form-control datepicker-{{ $name }}" 
                {{ $required ? 'required' : '' }}
-               placeholder="Select Date">
+               placeholder="DOB">
     </div>
 </div>
 

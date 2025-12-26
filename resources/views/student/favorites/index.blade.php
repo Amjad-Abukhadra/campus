@@ -2,7 +2,15 @@
 
 @section('content')
 <div class="container py-5">
-    <h2 class="mb-4 text-secondary fw-bold">Saved Items</h2>
+    <x-page-header 
+        title="Saved Items" 
+        subtitle="Access your bookmarked apartments and roommate posts"
+        icon="bi bi-bookmark-heart"
+        :breadcrumb="[
+            ['label' => 'Apartments', 'link' => route('student.apartments')],
+            ['label' => 'Saved Items']
+        ]"
+    />
 
     {{-- Saved Apartments --}}
     <h4 class="mb-3 border-bottom pb-2">Saved Apartments</h4>

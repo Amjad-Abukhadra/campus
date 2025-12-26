@@ -33,6 +33,19 @@ class RoommateController extends Controller
             });
         }
 
+        // New Filters: Gender and Date of Birth
+        if ($request->filled('gender')) {
+            $query->whereHas('student', function ($q) use ($request) {
+                $q->where('gender', $request->gender);
+            });
+        }
+
+        if ($request->filled('dob')) {
+            $query->whereHas('student', function ($q) use ($request) {
+                $q->whereDate('date_of_birth', $request->dob);
+            });
+        }
+
         $posts = $query->latest()
             ->get()
             ->filter(function ($post) {

@@ -4,50 +4,126 @@
     <div class="container-lg py-5">
 
         {{-- Header Section --}}
-        <div class="mb-5">
-            <h1 class="fw-bold text-dark mb-3">
-                <i class="bi bi-people-fill text-primary me-2"></i>Roommate Posts
-            </h1>
-            <p class="text-muted fs-6">Find your perfect roommate and connect with others</p>
-            <hr class="border-primary border-3 w-25 opacity-50">
-        </div>
+        <x-page-header title="Roommate Finder" subtitle="Find your perfect roommate and connect with others"
+            icon="bi bi-people-fill" :breadcrumb="[
+            ['label' => 'Apartments', 'link' => route('student.apartments')],
+            ['label' => 'Roommates']
+        ]">
+            <x-slot name="action">
+                <a href="{{ route('student.roommates.create') }}"
+                    class="btn btn-primary px-4 py-2 rounded-3 shadow-sm fw-bold">
+                    <i class="bi bi-plus-lg me-2"></i>Create Post
+                </a>
+            </x-slot>
+        </x-page-header>
 
-        {{-- Filters --}}
-        <div class="card shadow-sm border-0 rounded-4 mb-5">
-            <div class="card-body">
+        {{-- Filters Section --}}
+        <div class="card shadow-sm border-0 rounded-4 mb-5 overflow-hidden">
+            <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-sliders2-vertical me-2 text-primary"></i>Filter Posts
+                </h5>
+                <a href="{{ route('student.roommates.index') }}"
+                    class="btn btn-link btn-sm text-decoration-none text-muted">
+                    <i class="bi bi-arrow-counterclockwise me-1"></i>Reset All
+                </a>
+            </div>
+            <div class="card-body bg-light bg-opacity-50 p-4">
                 <form action="{{ route('student.roommates.index') }}" method="GET" class="row g-3">
-                    <div class="col-md-4">
-                        <div class="input-group">
-                            <span class="input-group-text bg-light border-end-0"><i
-                                    class="bi bi-geo-alt text-primary"></i></span>
-                            <input type="text" name="location" class="form-control border-start-0 ps-0"
-                                placeholder="Filter by apartment location..." value="{{ request('location') }}">
+                    {{-- Search & Location --}}
+                    <div class="col-lg-3 col-md-6">
+                        <div class="form-floating">
+                            <input type="text" name="location" id="location" class="form-control border-0 shadow-sm"
+                                placeholder="Location" value="{{ request('location') }}">
+                            <label for="location"><i class="bi bi-geo-alt text-primary me-2"></i>Apartment Location</label>
                         </div>
                     </div>
-                    <div class="col-md-3">
-                        <div class="input-group">
-                            <span class="input-group-text bg-light border-end-0"><i
-                                    class="bi bi-cash text-success"></i></span>
-                            <input type="number" name="min_price" class="form-control border-start-0 ps-0"
-                                placeholder="Min Rent" value="{{ request('min_price') }}">
+
+                    {{-- Price Range --}}
+                    <div class="col-lg-3 col-md-6">
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <div class="form-floating">
+                                    <input type="number" name="min_price" id="min_price"
+                                        class="form-control border-0 shadow-sm" placeholder="Min"
+                                        value="{{ request('min_price') }}">
+                                    <label for="min_price">Min Rent</label>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-floating">
+                                    <input type="number" name="max_price" id="max_price"
+                                        class="form-control border-0 shadow-sm" placeholder="Max"
+                                        value="{{ request('max_price') }}">
+                                    <label for="max_price">Max Rent</label>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-3">
-                        <div class="input-group">
-                            <span class="input-group-text bg-light border-end-0"><i
-                                    class="bi bi-cash-stack text-success"></i></span>
-                            <input type="number" name="max_price" class="form-control border-start-0 ps-0"
-                                placeholder="Max Rent" value="{{ request('max_price') }}">
+
+                    {{-- Gender --}}
+                    <div class="col-lg-2 col-md-6">
+                        <div class="form-floating">
+                            <select name="gender" id="gender" class="form-select border-0 shadow-sm">
+                                <option value="">All Genders</option>
+                                <option value="male" {{ request('gender') == 'male' ? 'selected' : '' }}>Male</option>
+                                <option value="female" {{ request('gender') == 'female' ? 'selected' : '' }}>Female</option>
+                            </select>
+                            <label for="gender"><i class="bi bi-gender-ambiguous text-info me-2"></i>Target Gender</label>
                         </div>
                     </div>
-                    <div class="col-md-2">
-                        <button type="submit" class="btn btn-primary w-100 fw-bold rounded-pill">
-                            <i class="bi bi-filter me-1"></i> Filter
+
+                    {{-- DOB --}}
+                    <div class="col-lg-2 col-md-6 custom-datepicker-filter">
+                        <x-form-datepicker name="dob" label="Born On" :value="request('dob')" />
+                    </div>
+
+                    {{-- Submit --}}
+                    <div class="col-lg-2 col-md-12 d-grid">
+                        <button type="submit" class="btn btn-primary fw-bold rounded-3 shadow-sm py-3">
+                            <i class="bi bi-search me-2"></i>Search
                         </button>
                     </div>
                 </form>
             </div>
         </div>
+
+        <style>
+            .form-floating>.form-control,
+            .form-floating>.form-select {
+                height: calc(3.5rem + 2px);
+                line-height: 1.25;
+            }
+
+            .form-floating>label {
+                padding: 1rem 0.75rem;
+            }
+
+            /* Styling for the custom datepicker within filters */
+            .custom-datepicker-filter .mb-3 {
+                margin-bottom: 0 !important;
+            }
+
+            .custom-datepicker-filter .form-label {
+                display: none;
+                /* Hide internal component label for cleaner layout */
+            }
+
+            .custom-datepicker-filter .input-group-text {
+                border-top-left-radius: 0.5rem;
+                border-bottom-left-radius: 0.5rem;
+                border: none;
+                background: white;
+                box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075);
+            }
+
+            .custom-datepicker-filter input {
+                border: none;
+                box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075);
+                height: calc(3.5rem + 2px);
+                border-top-right-radius: 0.5rem;
+                border-bottom-right-radius: 0.5rem;
+            }
+        </style>
 
         {{-- Action Buttons --}}
         <div class="d-flex flex-wrap gap-3 mb-5 justify-content-start">
@@ -139,6 +215,22 @@
                                                         {{ $post->student->name ?? 'N/A' }}
                                                         <span class="mx-2">•</span>
                                                         <i class="bi bi-clock me-1"></i>{{ $post->created_at->diffForHumans() }}
+                                                        @if($post->student)
+                                                            <span class="mx-2">•</span>
+                                                            <span
+                                                                class="badge bg-info bg-opacity-10 text-info border-0 rounded-pill px-2">
+                                                                <i
+                                                                    class="bi bi-gender-{{ $post->student->gender == 'male' ? 'male' : 'female' }} me-1"></i>
+                                                                {{ ucfirst($post->student->gender) }}
+                                                            </span>
+                                                            @if($post->student->date_of_birth)
+                                                                <span
+                                                                    class="badge bg-secondary bg-opacity-10 text-secondary border-0 rounded-pill px-2">
+                                                                    <i class="bi bi-calendar3 me-1"></i>
+                                                                    {{ \Carbon\Carbon::parse($post->student->date_of_birth)->age }} years
+                                                                </span>
+                                                            @endif
+                                                        @endif
                                                     </div>
                                                 </div>
                                             </div>
@@ -195,9 +287,7 @@
                                                         <i class="bi bi-send me-1"></i>Apply
                                                     </button>
                                                 </form>
-                                                <button type="button" class="btn btn-outline-secondary btn-sm">
-                                                    <i class="bi bi-eye"></i>
-                                                </button>
+
 
                                                 {{-- Save Button --}}
                                                 <form action="{{ route('student.favorites.toggle') }}" method="POST"

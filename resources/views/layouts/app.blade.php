@@ -18,6 +18,7 @@
 
 <body>
     @include('components.navbar')
+    @include('components.loading-screen')
     <div class="container">
         @yield('content')
     </div>

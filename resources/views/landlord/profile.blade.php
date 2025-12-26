@@ -2,6 +2,11 @@
 
 @section('content')
     <div class="container py-5">
+        <x-page-header title="My Profile" subtitle="Manage your personal information and account settings"
+            icon="bi bi-person-gear" :breadcrumb="[
+            ['label' => 'Dashboard', 'link' => route('dashboard')],
+            ['label' => 'Profile']
+        ]" />
         <div class="row g-4">
             {{-- Left Sidebar: Profile Card --}}
             <div class="col-lg-4">

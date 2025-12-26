@@ -4,13 +4,15 @@
     <div class="container-lg py-5">
 
         {{-- Header Section --}}
-        <div class="mb-5">
-            <h1 class="fw-bold text-dark mb-2">
-                <i class="bi bi-file-earmark-text text-primary me-2"></i>My Roommate Posts
-            </h1>
-            <p class="text-muted fs-6">Manage your roommate search posts and applications</p>
-            <hr class="border-primary border-3 w-25 opacity-50">
-        </div>
+        <x-page-header 
+            title="My Roommate Posts" 
+            subtitle="Manage your roommate search posts and track incoming applications"
+            icon="bi bi-file-text"
+            :breadcrumb="[
+                ['label' => 'Roommates', 'link' => route('student.roommates.index')],
+                ['label' => 'My Posts']
+            ]"
+        />
 
         {{-- Error / Success Messages --}}
         @if(session('error'))

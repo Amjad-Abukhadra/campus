@@ -4,13 +4,11 @@
     <div class="container-lg py-5">
 
         {{-- Header Section --}}
-        <div class="mb-5">
-            <h1 class="fw-bold text-dark mb-2">
-                <i class="bi bi-inbox-fill text-primary me-2"></i>Manage Roommate Applications
-            </h1>
-            <p class="text-muted fs-6">Review and manage applications from potential roommates</p>
-            <hr class="border-primary border-3 w-25 opacity-50">
-        </div>
+        <x-page-header title="Manage Applications" subtitle="Review students who want to join your roommate post"
+            icon="bi bi-people" :breadcrumb="[
+            ['label' => 'Roommates', 'link' => route('student.roommates.index')],
+            ['label' => 'Manage']
+        ]" />
 
         {{-- Error Messages --}}
         @if(session('error'))

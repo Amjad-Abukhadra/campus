@@ -6,10 +6,17 @@
         <div class="container">
 
             <!-- Header -->
-            <div class="mb-4">
-                <h1 class="fw-bold mb-2">Dashboard</h1>
-                <p class="text-muted">Manage your apartment listings</p>
-            </div>
+            <x-page-header title="Dashboard" subtitle="Manage your apartment listings and track performance"
+                icon="bi bi-speedometer2" :breadcrumb="[
+                    ['label' => 'Home', 'link' => url('/')],
+                    ['label' => 'Dashboard']
+                ]">
+                <x-slot name="action">
+                    <a href="{{ route('posts.create') }}" class="btn btn-primary px-4 py-2 rounded-3 shadow-sm fw-bold">
+                        <i class="bi bi-plus-lg me-2"></i>Add New Property
+                    </a>
+                </x-slot>
+            </x-page-header>
 
             <!-- Stats Cards -->
             <div class="row g-4 mb-4">
@@ -176,8 +183,8 @@
                                                 </button>
 
                                                 <!-- Delete Button -->
-                                                <form action="{{ route('apartments.destroy', $apartment->id) }}"
-                                                    method="POST" class="d-inline">
+                                                <form action="{{ route('apartments.destroy', $apartment->id) }}" method="POST"
+                                                    class="d-inline">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit"
@@ -192,8 +199,7 @@
                                     </tr>
 
                                     <!-- View Modal -->
-                                    <div class="modal fade" id="viewModal{{ $apartment->id }}" tabindex="-1"
-                                        aria-hidden="true">
+                                    <div class="modal fade" id="viewModal{{ $apartment->id }}" tabindex="-1" aria-hidden="true">
                                         <div class="modal-dialog modal-lg modal-dialog-centered">
                                             <div class="modal-content border-0 shadow-lg rounded-4">
                                                 <div class="modal-header border-0 py-4"
@@ -232,7 +238,8 @@
                                                                     class="text-muted small fw-semibold text-uppercase mb-1">Monthly
                                                                     Rent</label>
                                                                 <p class="fs-4 fw-bold text-primary mb-0">
-                                                                    {{ $apartment->rent }} JD</p>
+                                                                    {{ $apartment->rent }} JD
+                                                                </p>
                                                             </div>
 
                                                             <div class="mb-3">
@@ -244,9 +251,9 @@
                                                             <div>
                                                                 <label
                                                                     class="text-muted small fw-semibold text-uppercase mb-2 d-block">Description</label>
-                                                                <p class="text-muted small mb-0"
-                                                                    style="line-height: 1.6;">
-                                                                    {{ $apartment->description }}</p>
+                                                                <p class="text-muted small mb-0" style="line-height: 1.6;">
+                                                                    {{ $apartment->description }}
+                                                                </p>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -260,8 +267,7 @@
                                     </div>
 
                                     <!-- Edit Modal -->
-                                    <div class="modal fade" id="editModal{{ $apartment->id }}" tabindex="-1"
-                                        aria-hidden="true">
+                                    <div class="modal fade" id="editModal{{ $apartment->id }}" tabindex="-1" aria-hidden="true">
                                         <div class="modal-dialog modal-lg modal-dialog-centered">
                                             <div class="modal-content border-0 shadow-lg rounded-4">
                                                 <div class="modal-header border-0 py-4 bg-secondary text-white">
@@ -277,8 +283,7 @@
 
                                                         <div class="mb-3">
                                                             <label class="form-label fw-semibold">Title</label>
-                                                            <input type="text" name="title"
-                                                                value="{{ $apartment->title }}"
+                                                            <input type="text" name="title" value="{{ $apartment->title }}"
                                                                 class="form-control form-control-lg" required>
                                                         </div>
 
@@ -291,14 +296,14 @@
 
                                                         <div class="mb-3">
                                                             <label class="form-label fw-semibold">Rent (JD)</label>
-                                                            <input type="number" name="rent"
-                                                                value="{{ $apartment->rent }}"
+                                                            <input type="number" name="rent" value="{{ $apartment->rent }}"
                                                                 class="form-control form-control-lg" required>
                                                         </div>
 
                                                         <div class="mb-3">
                                                             <label class="form-label fw-semibold">Description</label>
-                                                            <textarea name="description" rows="4" class="form-control">{{ $apartment->description }}</textarea>
+                                                            <textarea name="description" rows="4"
+                                                                class="form-control">{{ $apartment->description }}</textarea>
                                                         </div>
 
                                                         <div class="mb-4">

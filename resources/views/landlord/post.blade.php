@@ -2,6 +2,11 @@
 
 @section('content')
     <div class="container py-5">
+        <x-page-header title="Add Property" subtitle="List your apartment for potential tenants" icon="bi bi-building-plus"
+            icon="bi bi-building-add" :breadcrumb="[
+            ['label' => 'Dashboard', 'link' => route('dashboard')],
+            ['label' => 'Post']
+        ]" />
         <form action="{{ route('store.post') }}" method="POST" enctype="multipart/form-data" novalidate>
             @csrf
 

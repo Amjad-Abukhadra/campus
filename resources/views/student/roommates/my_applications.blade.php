@@ -3,12 +3,12 @@
 @section('content')
     <div class="container py-5">
 
-        {{-- Page Title --}}
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h3 class="mb-0">
-                <i class="bi bi-file-earmark-text me-2"></i> My Applications
-            </h3>
-        </div>
+        {{-- Header Section --}}
+        <x-page-header title="My Applications" subtitle="Track your requests to join other students' roommate posts"
+            icon="bi bi-journal-check" :breadcrumb="[
+            ['label' => 'Roommates', 'link' => route('student.roommates.index')],
+            ['label' => 'My Applications']
+        ]" />
 
         <div class="row g-4">
 
@@ -29,13 +29,12 @@
 
                             {{-- STATUS --}}
                             <div class="mb-2">
-                                <span
-                                    class="badge 
-                                {{ $application->status === 'accepted'
-                                    ? 'bg-success'
-                                    : ($application->status === 'pending'
-                                        ? 'bg-warning text-dark'
-                                        : 'bg-danger') }}">
+                                <span class="badge 
+                                        {{ $application->status === 'accepted'
+                ? 'bg-success'
+                : ($application->status === 'pending'
+                    ? 'bg-warning text-dark'
+                    : 'bg-danger') }}">
                                     {{ ucfirst($application->status) }}
                                 </span>
                             </div>

@@ -2,6 +2,12 @@
 
 @section('content')
     <div class="container py-5">
+        <x-page-header title="My Profile"
+            subtitle="Manage your personal information, university major, and track your housing status"
+            icon="bi bi-person-badge" :breadcrumb="[
+            ['label' => 'Apartments', 'link' => route('student.apartments')],
+            ['label' => 'Profile']
+        ]" />
         <div class="row g-4">
             {{-- Left Sidebar: Profile Card --}}
             <div class="col-lg-4">
@@ -142,7 +148,7 @@
                                     @endif
                                     <span
                                         class="position-absolute top-0 end-0 m-3 badge 
-                                                                            {{ $application->status === 'accepted' ? 'bg-success' : ($application->status === 'pending' ? 'bg-warning text-dark' : 'bg-danger') }}">
+                                                                                                    {{ $application->status === 'accepted' ? 'bg-success' : ($application->status === 'pending' ? 'bg-warning text-dark' : 'bg-danger') }}">
                                         {{ ucfirst($application->status) }}
                                     </span>
                                 </div>
