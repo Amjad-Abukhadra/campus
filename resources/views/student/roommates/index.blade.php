@@ -288,6 +288,13 @@
                                                     </button>
                                                 </form>
 
+                                                @if($post->student && auth()->id() !== $post->student->id)
+                                                    <a href="{{ route('chat.start', $post->student->id) }}"
+                                                        class="btn btn-info btn-sm px-3 text-white rounded-pill shadow-sm">
+                                                        <i class="bi bi-chat-dots me-1"></i>Message
+                                                    </a>
+                                                @endif
+
 
                                                 {{-- Save Button --}}
                                                 <form action="{{ route('student.favorites.toggle') }}" method="POST"

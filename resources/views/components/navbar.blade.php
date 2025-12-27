@@ -71,6 +71,12 @@
                                 <i class="bi bi-person-circle nav-icon"></i> Profile
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('chat.*') ? 'active' : '' }}"
+                                href="{{ route('chat.index') }}">
+                                <i class="bi bi-chat-dots nav-icon"></i> Messages
+                            </a>
+                        </li>
                     @endif
 
                     {{-- 🔹 ADMIN LINKS --}}
@@ -107,6 +113,12 @@
                             <a class="nav-link {{ request()->is('saved-items*') ? 'active' : '' }}"
                                 href="{{ route('student.favorites.index') }}">
                                 <i class="bi bi-heart nav-icon"></i> Saved Items
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('chat.*') ? 'active' : '' }}"
+                                href="{{ route('chat.index') }}">
+                                <i class="bi bi-chat-dots nav-icon"></i> Messages
                             </a>
                         </li>
                         <li class="nav-item">

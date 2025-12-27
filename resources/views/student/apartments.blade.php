@@ -79,7 +79,7 @@
                             @endif
                             {{-- Rent Badge --}}
                             <span class="position-absolute top-0 end-0 bg-primary text-white px-3 py-1 
-                                                                             rounded-pill fw-bold shadow-sm m-2">
+                                                                                     rounded-pill fw-bold shadow-sm m-2">
                                 {{ $apartment->rent }} JD/mo
                             </span>
 
@@ -140,19 +140,27 @@
                                 @if ($status)
                                     <button
                                         class="btn 
-                                                                                                                                                                        @if ($status == 'pending') btn-warning
-                                                                                                                                                                        @elseif($status == 'approved') btn-success
-                                                                                                                                                                        @else btn-danger @endif w-100"
+                                                                                                                                                                                    @if ($status == 'pending') btn-warning
+                                                                                                                                                                                    @elseif($status == 'approved') btn-success
+                                                                                                                                                                                    @else btn-danger @endif w-100"
                                         disabled>
                                         {{ ucfirst($status) }}
                                     </button>
                                 @else
-                                    <form action="{{ route('student.apartments.apply', $apartment->id) }}" method="POST">
-                                        @csrf
-                                        <button type="submit" class="btn btn-primary w-100 fw-bold">
-                                            Apply Now
-                                        </button>
-                                    </form>
+                                    <div class="d-flex gap-2 mt-3">
+                                        <form action="{{ route('student.apartments.apply', $apartment->id) }}" method="POST"
+                                            class="flex-grow-1">
+                                            @csrf
+                                            <button type="submit" class="btn btn-primary w-100 fw-bold rounded-pill">
+                                                Apply Now
+                                            </button>
+                                        </form>
+                                        <a href="{{ route('chat.start', $apartment->landlord->id) }}"
+                                            class="btn btn-outline-info rounded-pill px-3 shadow-sm d-flex align-items-center justify-content-center"
+                                            title="Message Landlord">
+                                            <i class="bi bi-chat-dots-fill"></i>
+                                        </a>
+                                    </div>
                                 @endif
                             </div>
                         </div>

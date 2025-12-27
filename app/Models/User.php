@@ -65,4 +65,30 @@ class User extends Authenticatable implements LaratrustUser
     {
         return $this->hasMany(Application::class, 'std_id');
     }
+
+    public function conversationsAsUserOne()
+    {
+        return $this->hasMany(Conversation::class, 'user_one_id');
+    }
+
+    public function conversationsAsUserTwo()
+    {
+        return $this->hasMany(Conversation::class, 'user_two_id');
+    }
+
+    public function messages()
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
+
+    /**
+     * Get all conversations where the user is either user_one or user_two.
+     */
+    public function getConversationsAttribute()
+    {
+        return Conversation::where('user_one_id', $this->id)
+            ->orWhere('user_two_id', $this->id)
+            ->latest('last_message_at')
+            ->get();
+    }
 }

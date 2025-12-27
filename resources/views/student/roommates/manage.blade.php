@@ -124,9 +124,16 @@
                                     <i class="bi bi-save me-2"></i>Save Changes
                                 </button>
 
+                                @if($req->student)
+                                    <a href="{{ route('chat.start', $req->student->id) }}"
+                                        class="btn btn-info text-white fw-semibold rounded-pill px-4 py-2 shadow-sm">
+                                        <i class="bi bi-chat-dots me-2"></i>Message
+                                    </a>
+                                @endif
+
                                 <a href="mailto:{{ $req->student->email }}"
                                     class="btn btn-outline-secondary fw-semibold rounded-3 px-4 py-2">
-                                    <i class="bi bi-chat-dots me-2"></i>Contact
+                                    <i class="bi bi-envelope me-2"></i>Contact Email
                                 </a>
                             </form>
                         </div>

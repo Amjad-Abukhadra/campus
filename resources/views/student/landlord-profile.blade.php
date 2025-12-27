@@ -23,38 +23,47 @@
 
                     {{-- Landlord Basic Info --}}
                     <div class="col">
-                        <h1 class="fw-bold text-dark mb-2">{{ $landlord->name }}</h1>
-
-                        <div class="d-flex flex-column gap-2">
-                            @if ($landlord->phone_number)
-                                <div class="d-flex align-items-center gap-2">
-                                    <i class="bi bi-telephone-fill text-primary" style="font-size: 1.1rem;"></i>
-                                    <a href="tel:{{ $landlord->phone_number }}" class="text-dark text-decoration-none">
-                                        {{ $landlord->phone_number }}
-                                    </a>
-                                </div>
-                            @endif
-
-                            @if ($landlord->gender)
-                                <div class="d-flex align-items-center gap-2">
-                                    <i class="bi bi-gender-ambiguous text-primary" style="font-size: 1.1rem;"></i>
-                                    <span class="text-dark">{{ ucfirst($landlord->gender) }}</span>
-                                </div>
-                            @endif
-
-                            @if ($landlord->date_of_birth)
-                                <div class="d-flex align-items-center gap-2">
-                                    <i class="bi bi-calendar-event text-primary" style="font-size: 1.1rem;"></i>
-                                    <span class="text-dark">{{ $landlord->date_of_birth->format('F j, Y') }}</span>
-                                </div>
-                            @endif
-
+                        <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <span
-                                    class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill fw-semibold">
-                                    <i class="bi bi-building-fill me-2"></i>Landlord
-                                </span>
+                                <h1 class="fw-bold text-dark mb-2">{{ $landlord->name }}</h1>
+                                <div class="d-flex flex-column gap-2">
+                                    @if ($landlord->phone_number)
+                                        <div class="d-flex align-items-center gap-2">
+                                            <i class="bi bi-telephone-fill text-primary" style="font-size: 1.1rem;"></i>
+                                            <a href="tel:{{ $landlord->phone_number }}" class="text-dark text-decoration-none">
+                                                {{ $landlord->phone_number }}
+                                            </a>
+                                        </div>
+                                    @endif
+
+                                    @if ($landlord->gender)
+                                        <div class="d-flex align-items-center gap-2">
+                                            <i class="bi bi-gender-ambiguous text-primary" style="font-size: 1.1rem;"></i>
+                                            <span class="text-dark">{{ ucfirst($landlord->gender) }}</span>
+                                        </div>
+                                    @endif
+
+                                    @if ($landlord->date_of_birth)
+                                        <div class="d-flex align-items-center gap-2">
+                                            <i class="bi bi-calendar-event text-primary" style="font-size: 1.1rem;"></i>
+                                            <span class="text-dark">{{ $landlord->date_of_birth->format('F j, Y') }}</span>
+                                        </div>
+                                    @endif
+
+                                    <div>
+                                        <span
+                                            class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill fw-semibold">
+                                            <i class="bi bi-building-fill me-2"></i>Landlord
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
+                            @if(auth()->id() !== $landlord->id)
+                                <a href="{{ route('chat.start', $landlord->id) }}"
+                                    class="btn btn-primary rounded-pill px-4 py-2 shadow-sm d-flex align-items-center gap-2">
+                                    <i class="bi bi-chat-dots-fill"></i> Message Landlord
+                                </a>
+                            @endif
                         </div>
                     </div>
                 </div>

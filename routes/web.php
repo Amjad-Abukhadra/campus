@@ -80,3 +80,12 @@ Route::group(['middleware' => ['role:student'], 'prefix' => 'student'], function
     Route::put('/roommates/post/{post}/update', [RoommateController::class, 'updatePost'])->name('student.roommates.updatePost');
     Route::get('/roommates/my-applications', [RoommateController::class, 'myApplications'])->name('student.roommates.applications');
 });
+
+// CHAT ROUTES
+Route::middleware(['auth'])->group(function () {
+    Route::get('/chat', [App\Http\Controllers\ChatController::class, 'index'])->name('chat.index');
+    Route::get('/chat/{conversation}', [App\Http\Controllers\ChatController::class, 'show'])->name('chat.show');
+    Route::post('/chat/{conversation}/send', [App\Http\Controllers\ChatController::class, 'store'])->name('chat.send');
+    Route::get('/chat/start/{user}', [App\Http\Controllers\ChatController::class, 'start'])->name('chat.start');
+    Route::get('/chat/message-partial/{message}', [App\Http\Controllers\ChatController::class, 'getMessagePartial'])->name('chat.message.partial');
+});
