@@ -86,15 +86,16 @@ class LandlordController extends Controller
         $landlord->date_of_birth = $request->date_of_birth;
 
         // If a new image is uploaded
-        if ($request->hasFile('image')) {
+        if ($request->hasFile('image') && $request->file('image')->isValid()) {
             // Delete old image (optional)
             if ($landlord->image && Storage::disk('public')->exists('landlord/' . $landlord->image)) {
                 Storage::disk('public')->delete('landlord/' . $landlord->image);
             }
 
-            // Store new image in "storage/app/public/apartments/"
-            $path = $request->file('image')->store('landlord', 'public');
-            $landlord->image = basename($path);
+            // Store new image in "storage/app/public/landlord/"
+            $imageName = time() . '_' . $request->file('image')->getClientOriginalName();
+            $request->file('image')->storeAs('landlord', $imageName, 'public');
+            $landlord->image = $imageName;
         }
 
         $landlord->save();
@@ -121,14 +122,14 @@ class LandlordController extends Controller
         $apartment->description = $request->description;
 
         if ($request->hasFile('image') && $request->file('image')->isValid()) {
-
             if ($apartment->image && Storage::disk('public')->exists('apartments/' . $apartment->image)) {
                 Storage::disk('public')->delete('apartments/' . $apartment->image);
             }
 
-            $path = $request->file('image')->store('apartments', 'public');
+            $imageName = time() . '_' . $request->file('image')->getClientOriginalName();
+            $request->file('image')->storeAs('apartments', $imageName, 'public');
 
-            $apartment->image = basename($path);
+            $apartment->image = $imageName;
         }
 
 

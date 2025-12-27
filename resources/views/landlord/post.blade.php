@@ -9,7 +9,6 @@
         ]" />
         <form action="{{ route('store.post') }}" method="POST" enctype="multipart/form-data" novalidate>
             @csrf
-
             <div class="row justify-content-center">
                 <div class="col-lg-10"> <!-- Full width but centered -->
 

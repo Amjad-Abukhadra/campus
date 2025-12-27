@@ -1,126 +1,341 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="py-5">
-        <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
-            <div
-                class="bg-white dark:bg-gray-900 overflow-hidden shadow-sm sm:rounded-xl flex h-[750px] border border-gray-200 dark:border-gray-800">
-                <!-- Sidebar -->
-                <div class="w-1/3 border-r border-gray-200 dark:border-gray-800 flex flex-col bg-white dark:bg-gray-900">
-                    <div
-                        class="p-4 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center h-[70px]">
-                        <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100">{{ auth()->user()->name }}</h2>
-                        <button class="text-gray-600 dark:text-gray-400 hover:text-gray-900">
-                            <i class="bi bi-pencil-square fs-5"></i>
-                        </button>
+    <div class="py-4 py-md-5" style="position: relative; z-index: 1;">
+        <div class="container-xl">
+            <div class="row g-0 bg-white rounded-4 shadow-lg overflow-hidden" style="height: 85vh; max-height: 800px; position: relative; z-index: 1;">
+                
+                {{-- ============== SIDEBAR (Conversations List) ============== --}}
+                <div class="col-md-4 border-end border-light d-flex flex-column bg-light">
+                    
+                    {{-- Header --}}
+                    <div class="p-4 border-bottom border-light sticky-top bg-white">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h4 class="fw-bold mb-1">
+                                    <i class="bi bi-chat-dots text-primary me-2"></i>Messages
+                                </h4>
+                                <small class="text-muted d-block">Chat List</small>
+                            </div>
+                            <button class="btn btn-light rounded-3 p-2" title="Start new chat">
+                                <i class="bi bi-pencil-square text-primary fs-5"></i>
+                            </button>
+                        </div>
                     </div>
 
-                    <div class="px-4 py-3">
-                        <h3 class="text-sm font-bold text-gray-900 dark:text-gray-100">Messages</h3>
-                    </div>
-
-                    <div class="flex-1 overflow-y-auto custom-scrollbar">
+                    {{-- Conversations List --}}
+                    <div class="flex-grow-1 overflow-y-auto" style="min-height: 0;">
                         @forelse($conversations as $conv)
                             @php
                                 $otherUser = $conv->other_user;
                                 $lastMsg = $conv->messages->last();
                                 $unreadCount = $conv->messages->where('is_read', false)->where('sender_id', '!=', auth()->id())->count();
+                                $isActive = isset($conversation) && $conversation->id === $conv->id;
                             @endphp
                             <a href="{{ route('chat.show', $conv) }}"
-                                class="flex items-center px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors {{ isset($conversation) && $conversation->id === $conv->id ? 'bg-gray-100 dark:bg-gray-800' : '' }}">
-                                <div class="relative flex-shrink-0">
-                                    <img class="h-14 w-14 rounded-full object-cover p-0.5 border border-gray-200 dark:border-gray-700"
-                                        src="{{ $otherUser->image ? asset('storage/' . $otherUser->image) : 'https://ui-avatars.com/api/?name=' . urlencode($otherUser->name) . '&background=random' }}"
-                                        alt="">
+                                class="d-flex align-items-center gap-3 px-3 py-3 mx-2 mb-2 rounded-3 text-decoration-none transition-all {{ $isActive ? 'bg-white shadow-sm border border-primary border-2' : 'bg-white-50 border border-transparent' }} group position-relative"
+                                style="cursor: pointer;">
+                                
+                                {{-- User Avatar with Unread Indicator --}}
+                                <div class="position-relative flex-shrink-0">
+                                    <div class="rounded-circle {{ $unreadCount > 0 ? 'border border-3 border-primary' : '' }}" style="padding: 2px;">
+                                        <img class="rounded-circle border-2 border-white shadow-sm"
+                                            src="{{ $otherUser->image ? asset('storage/' . $otherUser->image) : 'https://ui-avatars.com/api/?name=' . urlencode($otherUser->name) . '&background=random' }}"
+                                            alt="{{ $otherUser->name }}"
+                                            style="width: 56px; height: 56px; object-fit: cover;">
+                                    </div>
                                     @if($unreadCount > 0)
-                                        <span
-                                            class="absolute top-0 right-0 block h-3.5 w-3.5 rounded-full bg-blue-500 border-2 border-white dark:border-gray-900"></span>
+                                        <span class="position-absolute top-0 end-0 badge bg-primary border-2 border-white" style="font-size: 9px; padding: 4px 6px;">
+                                            {{ $unreadCount }}
+                                        </span>
                                     @endif
                                 </div>
-                                <div class="ml-3 overflow-hidden flex-1">
-                                    <div class="flex justify-between items-baseline">
-                                        <div
-                                            class="text-sm {{ $unreadCount > 0 ? 'font-bold' : 'font-medium' }} text-gray-900 dark:text-gray-100 truncate">
+
+                                {{-- User Info --}}
+                                <div class="flex-grow-1 overflow-hidden">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <span class="fw-bold text-dark text-truncate">
                                             {{ $otherUser->name }}
-                                        </div>
-                                    </div>
-                                    <div
-                                        class="flex items-center text-xs {{ $unreadCount > 0 ? 'font-bold text-gray-900 dark:text-white' : 'text-gray-500' }} truncate mt-0.5">
-                                        <span
-                                            class="truncate">{{ $lastMsg ? $lastMsg->content : 'Start a conversation' }}</span>
+                                        </span>
                                         @if($lastMsg)
-                                            <span class="mx-1 text-[8px] opacity-50">&bull;</span>
-                                            <span
-                                                class="whitespace-nowrap">{{ $lastMsg->created_at->diffForHumans(null, true) }}</span>
+                                            <small class="text-muted ms-2">
+                                                {{ $lastMsg->created_at->diffForHumans(null, true) }}
+                                            </small>
                                         @endif
                                     </div>
+                                    <small class="d-block text-truncate {{ $unreadCount > 0 ? 'fw-bold text-dark' : 'text-muted' }}">
+                                        {{ $lastMsg ? ($lastMsg->sender_id === auth()->id() ? 'You: ' : '') . $lastMsg->content : 'Start a conversation' }}
+                                    </small>
                                 </div>
                             </a>
                         @empty
-                            <div class="p-8 text-center mt-10">
-                                <div
-                                    class="w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
-                                    <i class="bi bi-chat-dots text-gray-400 text-3xl"></i>
+                            <div class="text-center p-5 mt-5">
+                                <div class="bg-white rounded-4 shadow-sm d-inline-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
+                                    <i class="bi bi-chat-quote text-primary fs-2"></i>
                                 </div>
-                                <h4 class="font-bold text-gray-900 dark:text-gray-100">Direct Messages</h4>
-                                <p class="text-gray-500 text-sm mt-1">Send private photos and messages to a friend or group.</p>
-                                <button class="mt-4 text-blue-500 font-bold text-sm hover:text-blue-600">Send Message</button>
+                                <h5 class="fw-bold text-dark">No Messages</h5>
+                                <small class="text-muted d-block mt-2">Connect with others to start chatting.</small>
                             </div>
                         @endforelse
                     </div>
                 </div>
 
-                <!-- Chat Area (Placeholder for Index) -->
-                <div class="w-2/3 flex flex-col items-center justify-center bg-white dark:bg-gray-900">
-                    <div class="text-center p-8">
-                        <div
-                            class="w-24 h-24 border-2 border-gray-900 dark:border-white rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i class="bi bi-send text-4xl text-gray-900 dark:text-white rotate-12"></i>
+                {{-- ============== CHAT AREA (On the Right) ============== --}}
+                <div class="col-md-8 d-flex flex-column position-relative bg-white" style="overflow: hidden;">
+                    
+                    @if(isset($conversation))
+                        {{-- Chat Header --}}
+                        <div class="border-bottom border-light p-4 bg-white shadow-sm">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center gap-3">
+                                    <img class="rounded-circle border-2 border-light shadow-sm"
+                                        src="{{ $conversation->other_user->image ? asset('storage/' . $conversation->other_user->image) : 'https://ui-avatars.com/api/?name=' . urlencode($conversation->other_user->name) . '&background=random' }}"
+                                        alt="{{ $conversation->other_user->name }}"
+                                        style="width: 48px; height: 48px; object-fit: cover;">
+                                    <div>
+                                        <h6 class="fw-bold mb-0">{{ $conversation->other_user->name }}</h6>
+                                        <small class="text-muted">
+                                            <i class="bi bi-dot text-success"></i>Active now
+                                        </small>
+                                    </div>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-light rounded-3 p-2" title="Call">
+                                        <i class="bi bi-telephone text-primary"></i>
+                                    </button>
+                                    <button class="btn btn-light rounded-3 p-2" title="Video call">
+                                        <i class="bi bi-camera-video text-primary"></i>
+                                    </button>
+                                    <button class="btn btn-light rounded-3 p-2" title="More options">
+                                        <i class="bi bi-three-dots-vertical text-primary"></i>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                        <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100">Your Messages</h3>
-                        <p class="mt-2 text-sm text-gray-500 max-w-xs mx-auto">Send private photos and messages to a friend
-                            or group.</p>
-                        <button
-                            class="mt-6 bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded-lg font-bold text-sm transition-all shadow-sm">
-                            Send Message
-                        </button>
-                    </div>
+
+                        {{-- Messages Container --}}
+                        <div id="messages-container-{{ $conversation->id }}" class="flex-grow-1 overflow-y-auto p-4 bg-light" style="min-height: 0;">
+                            <div class="mx-auto" style="max-width: 90%;">
+                            @forelse($conversation->messages as $message)
+                                @include('chat.partials.message', ['message' => $message])
+                            @empty
+                                <div class="m-auto text-center">
+                                    <div class="bg-white rounded-4 d-inline-flex align-items-center justify-content-center mb-4" style="width: 100px; height: 100px;">
+                                        <i class="bi bi-chat text-primary" style="font-size: 3rem;"></i>
+                                    </div>
+                                    <h6 class="fw-bold text-dark">Start the conversation</h6>
+                                    <small class="text-muted">Be the first to send a message</small>
+                                </div>
+                            @endforelse
+                            </div>
+                        </div>
+
+                        {{-- Message Input --}}
+                        <div class="border-top border-light p-4 bg-white">
+                            <form id="chat-form-{{ $conversation->id }}" action="{{ route('chat.send', $conversation) }}" method="POST" class="d-flex gap-2 align-items-center" data-no-loader>
+                                @csrf
+                                <div class="flex-grow-1 bg-light rounded-4 d-flex align-items-center px-3">
+                                    <textarea id="message-input-{{ $conversation->id }}" name="content" rows="1"
+                                        class="form-control bg-transparent border-0 shadow-none py-2 resize-none"
+                                        placeholder="Type a message..." 
+                                        style="max-height: 120px; min-height: 44px;"
+                                        required></textarea>
+                                </div>
+                                <button type="submit" id="send-btn-{{ $conversation->id }}" 
+                                    class="btn btn-primary rounded-3 p-2 opacity-50"
+                                    disabled>
+                                    <i class="bi bi-send"></i>
+                                </button>
+                            </form>
+                        </div>
+
+                    @else
+                        {{-- Empty Chat State --}}
+                        <div class="d-flex flex-column align-items-center justify-content-center flex-grow-1 text-center p-5">
+                            <div class="bg-light rounded-4 d-inline-flex align-items-center justify-content-center mb-5" style="width: 120px; height: 120px;">
+                                <i class="bi bi-send text-primary" style="font-size: 4rem;"></i>
+                            </div>
+                            <h4 class="fw-bold text-dark mb-2">Select a Chat</h4>
+                            <p class="text-muted">Pick a conversation from the sidebar to continue your discussions.</p>
+                        </div>
+                    @endif
+
                 </div>
             </div>
         </div>
     </div>
-@endsection
 
-@push('styles')
     <style>
-        .custom-scrollbar::-webkit-scrollbar {
+        .row > .col-md-4, .row > .col-md-8 {
+            overflow: hidden;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
             width: 6px;
         }
-
-        .custom-scrollbar::-webkit-scrollbar-track {
+        
+        ::-webkit-scrollbar-track {
             background: transparent;
         }
-
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #dbdbdb;
+        
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.08);
             border-radius: 10px;
         }
-
-        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #363636;
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 0, 0, 0.12);
         }
 
-        /* Tailwind-like utils if missing in project */
-        .w-1\/3 {
-            width: 33.333333%;
+        .resize-none {
+            resize: none;
         }
 
-        .w-2\/3 {
-            width: 66.666667%;
-        }
-
-        .space-x-2>*+* {
-            margin-left: 0.5rem;
+        #messages-container-{{ isset($conversation) ? $conversation->id : '' }} {
+            scroll-behavior: smooth;
         }
     </style>
-@endpush
+
+    @if(isset($conversation))
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const conversationId = {{ $conversation->id }};
+            const messagesContainer = document.getElementById('messages-container-' + conversationId);
+            const chatForm = document.getElementById('chat-form-' + conversationId);
+            const messageInput = document.getElementById('message-input-' + conversationId);
+            const sendBtn = document.getElementById('send-btn-' + conversationId);
+
+            // Auto-scroll to bottom
+            const scrollToBottom = () => {
+                if (messagesContainer) {
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                }
+            };
+            scrollToBottom();
+
+            // Toggle Send Button based on input
+            if (messageInput) {
+                messageInput.addEventListener('input', function() {
+                    if (this.value.trim().length > 0) {
+                        sendBtn.classList.remove('opacity-50');
+                        sendBtn.removeAttribute('disabled');
+                    } else {
+                        sendBtn.classList.add('opacity-50');
+                        sendBtn.setAttribute('disabled', 'disabled');
+                    }
+                    
+                    // Auto-resize textarea
+                    this.style.height = 'auto';
+                    this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+                });
+
+                // Send on Enter (Shift+Enter for new line)
+                messageInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        if (this.value.trim().length > 0) {
+                            chatForm.requestSubmit();
+                        }
+                    }
+                });
+            }
+
+            // AJAX Form Submit
+            if (chatForm) {
+                chatForm.addEventListener('submit', async function (e) {
+                    e.preventDefault();
+                    const content = messageInput.value.trim();
+                    if (!content) return;
+
+                    const formData = new FormData(chatForm);
+                    messageInput.value = '';
+                    messageInput.style.height = 'auto';
+                    sendBtn.classList.add('opacity-50');
+                    sendBtn.setAttribute('disabled', 'disabled');
+
+                    try {
+                        const response = await fetch(chatForm.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                        });
+
+                        if (response.ok) {
+                            const data = await response.json();
+                            // Add the message to the chat immediately
+                            if (data.html) {
+                                const messageList = messagesContainer.querySelector('.mx-auto');
+                                if (messageList) {
+                                    messageList.insertAdjacentHTML('beforeend', data.html);
+                                    scrollToBottom();
+                                }
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error sending message:', error);
+                    }
+                });
+            }
+
+            // Real-Time Messaging with Echo (WebSocket) + Polling Fallback
+            let lastMessageId = {{ isset($conversation) && $conversation->messages->last() ? $conversation->messages->last()->id : 0 }};
+            let pollingInterval;
+            let usingEcho = false;
+
+            // Try to use Echo for instant real-time messaging
+            if (typeof Echo !== 'undefined') {
+                usingEcho = true;
+                console.log('✅ Using Echo for instant real-time messaging');
+                
+                Echo.private(`conversation.${conversationId}`)
+                    .listen('MessageSent', (e) => {
+                        fetch(`/chat/message-partial/${e.message.id}`)
+                            .then(res => res.text())
+                            .then(html => {
+                                const messageList = messagesContainer.querySelector('.mx-auto');
+                                if (messageList) {
+                                    messageList.insertAdjacentHTML('beforeend', html);
+                                    scrollToBottom();
+                                    lastMessageId = e.message.id;
+                                }
+                            });
+                    });
+            } else {
+                // Fallback to polling if Echo is not available
+                console.log('⚠️ Echo not available, using polling (3-second delay)');
+                
+                function pollForNewMessages() {
+                    fetch(`/chat/${conversationId}/poll?last_message_id=${lastMessageId}`, {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.has_new && data.html) {
+                            const messageList = messagesContainer.querySelector('.mx-auto');
+                            if (messageList) {
+                                messageList.insertAdjacentHTML('beforeend', data.html);
+                                scrollToBottom();
+                                lastMessageId = data.last_message_id;
+                            }
+                        }
+                    })
+                    .catch(error => console.error('Polling error:', error));
+                }
+
+                // Start polling every 3 seconds
+                pollingInterval = setInterval(pollForNewMessages, 3000);
+
+                // Stop polling when page is hidden (save resources)
+                document.addEventListener('visibilitychange', function() {
+                    if (document.hidden) {
+                        clearInterval(pollingInterval);
+                    } else {
+                        pollingInterval = setInterval(pollForNewMessages, 3000);
+                    }
+                });
+            }
+        });
+    </script>
+    @endif
+@endsection

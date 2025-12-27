@@ -102,4 +102,41 @@ class ChatController extends Controller
 
         return view('chat.partials.message', compact('message'));
     }
+
+    /**
+     * Get new messages for polling (AJAX).
+     */
+    public function getNewMessages(Request $request, Conversation $conversation)
+    {
+        // Authorize
+        if ($conversation->user_one_id !== Auth::id() && $conversation->user_two_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $lastMessageId = $request->input('last_message_id', 0);
+        
+        // Get messages newer than the last known message
+        $newMessages = $conversation->messages()
+            ->where('id', '>', $lastMessageId)
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        // Mark new messages as read
+        $conversation->messages()
+            ->where('id', '>', $lastMessageId)
+            ->where('sender_id', '!=', Auth::id())
+            ->update(['is_read' => true]);
+
+        $html = '';
+        foreach ($newMessages as $message) {
+            $html .= view('chat.partials.message', compact('message'))->render();
+        }
+
+        return response()->json([
+            'has_new' => $newMessages->count() > 0,
+            'count' => $newMessages->count(),
+            'html' => $html,
+            'last_message_id' => $newMessages->last() ? $newMessages->last()->id : $lastMessageId
+        ]);
+    }
 }

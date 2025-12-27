@@ -88,4 +88,5 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/chat/{conversation}/send', [App\Http\Controllers\ChatController::class, 'store'])->name('chat.send');
     Route::get('/chat/start/{user}', [App\Http\Controllers\ChatController::class, 'start'])->name('chat.start');
     Route::get('/chat/message-partial/{message}', [App\Http\Controllers\ChatController::class, 'getMessagePartial'])->name('chat.message.partial');
+    Route::get('/chat/{conversation}/poll', [App\Http\Controllers\ChatController::class, 'getNewMessages'])->name('chat.poll');
 });

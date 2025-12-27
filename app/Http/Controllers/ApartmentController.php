@@ -14,34 +14,47 @@ class ApartmentController extends Controller
         return view('landlord.post');
     }
     public function store(Request $request)
-    {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'location' => 'required|string|max:255',
-            'rent' => 'required|numeric',
-            'description' => 'required|string',
-            'image' => 'nullable|image|max:2048',
-        ]);
+{
+    // 1️⃣ Validate request
+    $request->validate([
+        'title' => 'required|string|max:255',
+        'location' => 'required|string|max:255',
+        'rent' => 'required|numeric',
+        'description' => 'required|string',
+        'image' => 'required|image|max:2048', // image MUST be uploaded
+    ]);
 
-        $landlord = Auth::user();
+    // 2️⃣ Get authenticated landlord
+    $landlord = Auth::user();
 
-        $apartment = new Apartment();
-        $apartment->landlord_id = $landlord->id;
-        $apartment->title = $request->title;
-        $apartment->location = $request->location;
-        $apartment->rent = $request->rent;
-        $apartment->description = $request->description;
+    // 3️⃣ Create apartment
+    $apartment = new Apartment();
+    $apartment->landlord_id = $landlord->id;
+    $apartment->title = $request->title;
+    $apartment->location = $request->location;
+    $apartment->rent = $request->rent;
+    $apartment->description = $request->description;
 
-        if ($request->hasFile('image')) {
-            $imageName = time() . '_' . $request->file('image')->getClientOriginalName();
-            $request->file('image')->storeAs('public/apartments', $imageName);
-            $apartment->image = $imageName;
-        }
+    // 4️⃣ Store image (safe & guaranteed)
+    if ($request->hasFile('image')) {
+        $imageName = time() . '_' . $request->file('image')->getClientOriginalName();
 
-        $apartment->save();
+        // store in storage/app/public/apartments
+        $request->file('image')->storeAs('apartments', $imageName, 'public');
 
-        return redirect()->route('landlord.profile')->with('success', 'Apartment added successfully!');
+        // save filename in DB
+        $apartment->image = $imageName;
     }
+
+    // 5️⃣ Save apartment
+    $apartment->save();
+
+    // 6️⃣ Redirect
+    return redirect()
+        ->route('landlord.profile')
+        ->with('success', 'Apartment added successfully!');
+}
+
     public function show($id)
     {
         $apartment = Apartment::findOrFail($id);
@@ -67,12 +80,13 @@ class ApartmentController extends Controller
         ]);
 
         $apartment->update($request->only(['title', 'location', 'rent', 'description']));
-        if ($request->hasFile('image')) {
+        if ($request->hasFile('image') && $request->file('image')->isValid()) {
             if ($apartment->image && Storage::disk('public')->exists('apartments/' . $apartment->image)) {
                 Storage::disk('public')->delete('apartments/' . $apartment->image);
             }
-            $path = $request->file('image')->store('apartments', 'public');
-            $apartment->image = basename($path);
+            $imageName = time() . '_' . $request->file('image')->getClientOriginalName();
+            $request->file('image')->storeAs('apartments', $imageName, 'public');
+            $apartment->image = $imageName;
         }
         $apartment->save();
 
