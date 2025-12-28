@@ -118,14 +118,6 @@
                                     {{ Str::limit($apartment->description, 85) }}
                                 </p>
 
-                                {{-- Footer --}}
-                                <div class="d-grid gap-2">
-                                    <a href="{{ route('student.apartments') }}"
-                                        class="btn btn-primary fw-semibold rounded-3 py-2 hover-lift"
-                                        style="transition: all 0.2s ease;">
-                                        <i class="bi bi-eye me-2"></i>View Details
-                                    </a>
-                                </div>
                             </div>
                         </div>
                     </div>

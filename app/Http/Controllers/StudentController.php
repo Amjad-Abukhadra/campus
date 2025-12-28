@@ -117,6 +117,17 @@ class StudentController extends Controller
 
         return view('student.landlord-profile', compact('landlord', 'apartments'));
     }
+    public function viewStudent($id)
+    {
+        $student = User::findOrFail($id);
 
+        // Roommate posts by this student
+        $posts = RoommatePost::with(['apartment', 'preferences'])
+            ->where('std_id', $id)
+            ->latest()
+            ->get();
+
+        return view('student.public-profile', compact('student', 'posts'));
+    }
 
 }

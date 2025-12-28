@@ -54,9 +54,11 @@ Route::group(['middleware' => ['role:student'], 'prefix' => 'student'], function
     Route::post('/apartments/{apartment}/apply', [StudentController::class, 'applyApartment'])->name('student.apartments.apply');
 
     Route::get('/applications', [StudentController::class, 'applications'])->name('student.applications');
-
     Route::get('/landlord/{id}', [StudentController::class, 'viewLandlord'])
         ->name('student.landlord.profile');
+    Route::get('/student/{id}', [StudentController::class, 'viewStudent'])
+        ->name('student.view');
+
     // ROOMMATE POSTS
     Route::get('/roommates', [RoommateController::class, 'index'])->name('student.roommates.index');
     Route::get('/roommates/create', [RoommateController::class, 'create'])->name('student.roommates.create');

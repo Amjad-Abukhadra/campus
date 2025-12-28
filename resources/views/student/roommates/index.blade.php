@@ -212,7 +212,10 @@
                                                     </h5>
                                                     <div class="text-muted small">
                                                         <i class="bi bi-person-circle me-1"></i>
-                                                        {{ $post->student->name ?? 'N/A' }}
+                                                        <a href="{{ route('student.view', $post->student->id) }}"
+                                                            class="text-decoration-none text-muted hover-primary">
+                                                            {{ $post->student->name ?? 'N/A' }}
+                                                        </a>
                                                         <span class="mx-2">•</span>
                                                         <i class="bi bi-clock me-1"></i>{{ $post->created_at->diffForHumans() }}
                                                         @if($post->student)
@@ -260,8 +263,8 @@
                                                         <small class="d-block">Location</small>
                                                         <strong class="text-dark">{{ $post->apartment->location ?? 'N/A' }}</strong>
                                                         @if($post->apartment && $post->apartment->latitude && $post->apartment->longitude)
-                                                            <a href="https://www.google.com/maps/search/?api=1&query={{ $post->apartment->latitude }},{{ $post->apartment->longitude }}" 
-                                                               target="_blank" class="d-block text-decoration-none small text-primary">
+                                                            <a href="https://www.google.com/maps/search/?api=1&query={{ $post->apartment->latitude }},{{ $post->apartment->longitude }}"
+                                                                target="_blank" class="d-block text-decoration-none small text-primary">
                                                                 <i class="bi bi-map-fill"></i> Map
                                                             </a>
                                                         @endif

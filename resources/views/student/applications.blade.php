@@ -145,9 +145,6 @@
                                         @endif
                                     @endif
 
-                                    <a class="btn btn-outline-primary fw-semibold rounded-3 py-2">
-                                        <i class="bi bi-eye me-2"></i>View Apartment
-                                    </a>
                                 </div>
                             </div>
                         </div>

@@ -57,11 +57,10 @@ class VerificationRequestResource extends Resource
                     ->disk('public')
                     ->height(100)
                     ->width(160)
-                    ->modalWidth('xl')
                     ->extraImgAttributes(['class' => 'object-contain']),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn(string $state): string => match ($state) {
                         'approved' => 'success',
                         'rejected' => 'danger',
                         'pending' => 'warning',
@@ -88,7 +87,7 @@ class VerificationRequestResource extends Resource
                         $record->update(['status' => 'approved']);
                         $record->user->update(['is_verified' => true]);
                     })
-                    ->visible(fn (VerificationRequest $record) => $record->status === 'pending'),
+                    ->visible(fn(VerificationRequest $record) => $record->status === 'pending'),
 
                 Action::make('reject')
                     ->color('danger')
@@ -101,11 +100,11 @@ class VerificationRequestResource extends Resource
                     ])
                     ->action(function (VerificationRequest $record, array $data) {
                         $record->update([
-                            'status' => 'rejected', 
+                            'status' => 'rejected',
                             'admin_notes' => $data['admin_notes']
                         ]);
                     })
-                    ->visible(fn (VerificationRequest $record) => $record->status === 'pending'),
+                    ->visible(fn(VerificationRequest $record) => $record->status === 'pending'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -130,7 +129,7 @@ class VerificationRequestResource extends Resource
             // 'edit' => Pages\EditVerificationRequest::route('/{record}/edit'),
         ];
     }
-    
+
     public static function canCreate(): bool
     {
         return false;

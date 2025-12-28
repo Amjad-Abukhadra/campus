@@ -66,17 +66,18 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('profile') ? 'active' : '' }}"
-                                href="{{ route('profile') }}">
-                                <i class="bi bi-person-circle nav-icon"></i> Profile
-                            </a>
-                        </li>
-                        <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('chat.*') ? 'active' : '' }}"
                                 href="{{ route('chat.index') }}">
                                 <i class="bi bi-chat-dots nav-icon"></i> Messages
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('profile') ? 'active' : '' }}"
+                                href="{{ route('profile') }}">
+                                <i class="bi bi-person-circle nav-icon"></i> Profile
+                            </a>
+                        </li>
+
                     @endif
 
                     {{-- 🔹 ADMIN LINKS --}}

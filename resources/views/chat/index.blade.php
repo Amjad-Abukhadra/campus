@@ -115,7 +115,7 @@
 
                         {{-- Messages Container --}}
                         <div id="messages-container-{{ $conversation->id }}" class="flex-grow-1 overflow-y-auto p-4 bg-light" style="min-height: 0;">
-                            <div class="mx-auto" style="max-width: 90%;">
+                            <div class="mx-auto" style="max-width: 55%;">
                             @forelse($conversation->messages as $message)
                                 @include('chat.partials.message', ['message' => $message])
                             @empty
