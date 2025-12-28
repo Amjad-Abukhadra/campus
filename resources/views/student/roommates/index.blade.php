@@ -259,6 +259,12 @@
                                                     <div>
                                                         <small class="d-block">Location</small>
                                                         <strong class="text-dark">{{ $post->apartment->location ?? 'N/A' }}</strong>
+                                                        @if($post->apartment && $post->apartment->latitude && $post->apartment->longitude)
+                                                            <a href="https://www.google.com/maps/search/?api=1&query={{ $post->apartment->latitude }},{{ $post->apartment->longitude }}" 
+                                                               target="_blank" class="d-block text-decoration-none small text-primary">
+                                                                <i class="bi bi-map-fill"></i> Map
+                                                            </a>
+                                                        @endif
                                                     </div>
                                                 </div>
                                                 <div class="col-6 col-lg-4 d-flex align-items-center">

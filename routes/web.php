@@ -41,6 +41,9 @@ Route::group(['middleware' => ['role:landlord'], 'prefix' => 'landlord'], functi
     Route::put('/apartments/{apartment}', [ApartmentController::class, 'update'])->name('apartments.update'); // Update
     Route::delete('/apartments/{apartment}', [ApartmentController::class, 'destroy'])->name('apartments.destroy'); // Delete
 
+    // Verification
+    Route::get('/verify', [LandlordController::class, 'verificationForm'])->name('landlord.verification.form');
+    Route::post('/verify', [LandlordController::class, 'submitVerification'])->name('landlord.verification.submit');
 });
 
 Route::group(['middleware' => ['role:student'], 'prefix' => 'student'], function () {

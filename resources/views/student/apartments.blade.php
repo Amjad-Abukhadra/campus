@@ -111,6 +111,9 @@
                                 <a href="{{ route('student.landlord.profile', $apartment->landlord->id) }}"
                                     class="badge bg-info text-dark px-2 py-1 rounded-pill text-decoration-none">
                                     {{ $apartment->landlord->name ?? 'Unknown' }}
+                                    @if($apartment->landlord->is_verified)
+                                        <i class="bi bi-patch-check-fill text-primary ms-1" title="Verified Landlord"></i>
+                                    @endif
                                 </a>
                             </p>
 
@@ -118,6 +121,12 @@
                             <p class="mb-1">
                                 <i class="bi bi-geo-alt-fill text-danger me-1"></i>
                                 <small>{{ $apartment->location }}</small>
+                                @if($apartment->latitude && $apartment->longitude)
+                                    <a href="https://www.google.com/maps/search/?api=1&query={{ $apartment->latitude }},{{ $apartment->longitude }}" 
+                                       target="_blank" class="ms-2 text-decoration-none small">
+                                        <i class="bi bi-map-fill"></i> View on Map
+                                    </a>
+                                @endif
                             </p>
 
                             {{-- Rating Stars --}}

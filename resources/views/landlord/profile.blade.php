@@ -243,6 +243,18 @@
                                                     <input type="text" name="location" value="{{ $apartment->location }}"
                                                         class="form-control" required>
                                                 </div>
+                                                
+                                                <!-- Map Selection -->
+                                                <div class="col-md-12">
+                                                    <label class="form-label">Pin Location on Map</label>
+                                                    <div id="map-edit-{{ $apartment->id }}" class="edit-map"
+                                                        data-id="{{ $apartment->id }}"
+                                                        data-lat="{{ $apartment->latitude }}"
+                                                        data-lng="{{ $apartment->longitude }}"
+                                                        style="height: 300px; width: 100%; border-radius: 8px;"></div>
+                                                    <input type="hidden" name="latitude" id="latitude-{{ $apartment->id }}" value="{{ $apartment->latitude }}">
+                                                    <input type="hidden" name="longitude" id="longitude-{{ $apartment->id }}" value="{{ $apartment->longitude }}">
+                                                </div>
                                                 <div class="col-md-12">
                                                     <label class="form-label">Description</label>
                                                     <textarea name="description" class="form-control"
@@ -282,6 +294,66 @@
             </div>
         </div>
     </div>
+    <!-- Map Scripts -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var modals = document.querySelectorAll('.modal');
+            modals.forEach(function(modal) {
+                modal.addEventListener('shown.bs.modal', function(event) {
+                    var mapContainer = modal.querySelector('.edit-map');
+                    if (mapContainer && !mapContainer.classList.contains('initialized')) {
+                        var id = mapContainer.getAttribute('data-id');
+                        var initialLat = mapContainer.getAttribute('data-lat') || 31.9539;
+                        var initialLng = mapContainer.getAttribute('data-lng') || 35.9106;
+
+                        var map = L.map('map-edit-' + id).setView([initialLat, initialLng], 13);
+                        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                            maxZoom: 19,
+                            attribution: '&copy; OpenStreetMap'
+                        }).addTo(map);
+
+                        var marker;
+                        if (mapContainer.getAttribute('data-lat') && mapContainer.getAttribute('data-lng')) {
+                             marker = L.marker([initialLat, initialLng], {draggable: true}).addTo(map);
+                        }
+
+                        map.on('click', function(e) {
+                            var lat = e.latlng.lat;
+                            var lng = e.latlng.lng;
+
+                            if (marker) {
+                                marker.setLatLng(e.latlng);
+                            } else {
+                                marker = L.marker(e.latlng, {draggable: true}).addTo(map);
+                            }
+
+                            document.getElementById('latitude-' + id).value = lat;
+                            document.getElementById('longitude-' + id).value = lng;
+                            
+                             marker.on('dragend', function(e) {
+                                var lat = e.target.getLatLng().lat;
+                                var lng = e.target.getLatLng().lng;
+                                document.getElementById('latitude-' + id).value = lat;
+                                document.getElementById('longitude-' + id).value = lng;
+                            });
+                        });
+                        
+                        // Handle marker dragging if it exists initially
+                         if(marker) {
+                            marker.on('dragend', function(e) {
+                                var lat = e.target.getLatLng().lat;
+                                var lng = e.target.getLatLng().lng;
+                                document.getElementById('latitude-' + id).value = lat;
+                                document.getElementById('longitude-' + id).value = lng;
+                            });
+                         }
+
+                        mapContainer.classList.add('initialized');
+                    }
+                });
+            });
+        });
+    </script>
     <style>
         .hover-lift {
             transition: transform 0.3s ease, box-shadow 0.3s ease;

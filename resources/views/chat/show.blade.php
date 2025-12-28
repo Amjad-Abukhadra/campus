@@ -112,7 +112,7 @@
 
                     {{-- Messages Container --}}
                     <div id="messages-container" class="flex-grow-1 overflow-y-auto p-4 bg-light" style="min-height: 0;">
-                        <div class="mx-auto py-4" style="max-width: 90%;">
+                        <div class="mx-auto p-4" >
                             @php $lastDate = null; @endphp
                             @foreach($messages as $message)
                                 @php $currentDate = $message->created_at->format('Y-m-d'); @endphp
@@ -246,6 +246,19 @@
                 }
             });
 
+            // Helper to append message safely
+            const appendMessage = (html, id) => {
+                if (document.querySelector(`[data-message-id="${id}"]`)) return; // Prevent duplicates
+                
+                const messageList = messagesContainer.querySelector('.mx-auto');
+                messageList.insertAdjacentHTML('beforeend', html);
+                scrollToBottom();
+                
+                if (id > lastMessageId) {
+                    lastMessageId = id;
+                }
+            };
+
             {{-- Form Submit --}}
             chatForm.addEventListener('submit', async function (e) {
                 e.preventDefault();
@@ -269,9 +282,15 @@
                         const data = await response.json();
                         // Add the message to the chat immediately
                         if (data.html) {
-                            const messageList = messagesContainer.querySelector('.mx-auto');
-                            messageList.insertAdjacentHTML('beforeend', data.html);
-                            scrollToBottom();
+                            // Extract ID from HTML string if not provided in JSON
+                            // But usually best if controller returns ID. 
+                            // We will try to extract it from the data-message-id attribute in the HTML
+                            const tempDiv = document.createElement('div');
+                            tempDiv.innerHTML = data.html;
+                            const newMsg = tempDiv.firstElementChild;
+                            const newId = newMsg.getAttribute('data-message-id');
+                            
+                            appendMessage(data.html, newId);
                         }
                     }
                 } catch (error) {
@@ -291,13 +310,13 @@
                 
                 Echo.private(`conversation.{{ $conversation->id }}`)
                     .listen('MessageSent', (e) => {
+                        // Check duplicate before fetch
+                        if (document.querySelector(`[data-message-id="${e.message.id}"]`)) return;
+
                         fetch(`/chat/message-partial/${e.message.id}`)
                             .then(res => res.text())
                             .then(html => {
-                                const messageList = messagesContainer.querySelector('.mx-auto');
-                                messageList.insertAdjacentHTML('beforeend', html);
-                                scrollToBottom();
-                                lastMessageId = e.message.id;
+                                appendMessage(html, e.message.id);
                             });
                     });
             } else {
@@ -311,10 +330,15 @@
                     .then(res => res.json())
                     .then(data => {
                         if (data.has_new && data.html) {
-                            const messageList = messagesContainer.querySelector('.mx-auto');
-                            messageList.insertAdjacentHTML('beforeend', data.html);
-                            scrollToBottom();
-                            lastMessageId = data.last_message_id;
+                            // The poll might return multiple messages in one HTML block or we might need to handle it.
+                            // Assuming backend returns a single block of HTML for all new messages.
+                            // We should really strictly check IDs but fast solution:
+                            if(data.last_message_id > lastMessageId) {
+                                 const messageList = messagesContainer.querySelector('.mx-auto');
+                                 messageList.insertAdjacentHTML('beforeend', data.html); // Polling usually guaranteed new by ID
+                                 scrollToBottom();
+                                 lastMessageId = data.last_message_id;
+                            }
                         }
                     })
                     .catch(error => console.error('Polling error:', error));

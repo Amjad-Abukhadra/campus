@@ -94,7 +94,7 @@ class LandlordController extends Controller
 
             // Store new image in "storage/app/public/landlord/"
             $imageName = time() . '_' . $request->file('image')->getClientOriginalName();
-            $request->file('image')->storeAs('landlord', $imageName, 'public');
+            $request->file('image')->store('landlord', $imageName, 'public');
             $landlord->image = $imageName;
         }
 
@@ -107,6 +107,8 @@ class LandlordController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'location' => 'required|string|max:255',
+            'latitude' => 'nullable|numeric|between:-90,90',
+            'longitude' => 'nullable|numeric|between:-180,180',
             'rent' => 'required|numeric',
             'description' => 'required|string',
             'image' => 'nullable|image|max:2048',
@@ -118,6 +120,8 @@ class LandlordController extends Controller
         $apartment->landlord_id = $landlord->id;
         $apartment->title = $request->title;
         $apartment->location = $request->location;
+        $apartment->latitude = $request->latitude;
+        $apartment->longitude = $request->longitude;
         $apartment->rent = $request->rent;
         $apartment->description = $request->description;
 
@@ -136,5 +140,32 @@ class LandlordController extends Controller
         $apartment->save();
 
         return redirect()->route('profile')->with('success', 'Apartment added successfully!');
+    }
+    public function verificationForm()
+    {
+        $pendingRequest = \App\Models\VerificationRequest::where('user_id', Auth::id())
+            ->where('status', 'pending')
+            ->first();
+
+        return view('landlord.verify', compact('pendingRequest'));
+    }
+
+    public function submitVerification(Request $request)
+    {
+        $request->validate([
+            'document' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'national_id_number' => 'nullable|string|max:255',
+        ]);
+
+        $path = $request->file('document')->store('verification_documents', 'public');
+
+        \App\Models\VerificationRequest::create([
+            'user_id' => Auth::id(),
+            'document_path' => $path,
+            'national_id_number' => $request->national_id_number,
+            'status' => 'pending',
+        ]);
+
+        return redirect()->back()->with('success', 'Verification request submitted. We will review it shortly.');
     }
 }

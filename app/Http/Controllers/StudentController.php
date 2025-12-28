@@ -55,6 +55,7 @@ class StudentController extends Controller
             ->toArray();
 
         $query = Apartment::with(['landlord', 'reviews'])
+            ->where('status', 'approved')
             ->whereNotIn('id', $acceptedApartmentIds);
 
         // Filters
@@ -110,7 +111,9 @@ class StudentController extends Controller
         $landlord = User::findOrFail($id);
 
         // apartments by this landlord
-        $apartments = Apartment::where('landlord_id', $id)->get();
+        $apartments = Apartment::where('landlord_id', $id)
+            ->where('status', 'approved')
+            ->get();
 
         return view('student.landlord-profile', compact('landlord', 'apartments'));
     }

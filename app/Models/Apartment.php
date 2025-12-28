@@ -14,7 +14,10 @@ class Apartment extends Model
         'landlord_id',
         'title',
         'location',
+        'latitude',
+        'longitude',
         'rent',
+        'status',
         'image',
         'description'
     ];

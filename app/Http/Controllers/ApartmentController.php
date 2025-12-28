@@ -74,12 +74,14 @@ class ApartmentController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'location' => 'required|string|max:255',
+            'latitude' => 'nullable|numeric|between:-90,90',
+            'longitude' => 'nullable|numeric|between:-180,180',
             'rent' => 'required|numeric',
             'description' => 'required|string',
             'image' => 'nullable|image|max:2048',
         ]);
 
-        $apartment->update($request->only(['title', 'location', 'rent', 'description']));
+        $apartment->update($request->only(['title', 'location', 'latitude', 'longitude', 'rent', 'description']));
         if ($request->hasFile('image') && $request->file('image')->isValid()) {
             if ($apartment->image && Storage::disk('public')->exists('apartments/' . $apartment->image)) {
                 Storage::disk('public')->delete('apartments/' . $apartment->image);

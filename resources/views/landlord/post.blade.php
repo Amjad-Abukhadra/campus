@@ -56,6 +56,17 @@
                                 </div>
                             </div>
 
+                            <!-- Map Selection -->
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold text-dark">
+                                    <i class="bi bi-map me-1"></i> Pin Location on Map
+                                </label>
+                                <div id="map" style="height: 300px; width: 100%; border-radius: 8px;"></div>
+                                <input type="hidden" name="latitude" id="latitude" value="{{ old('latitude') }}">
+                                <input type="hidden" name="longitude" id="longitude" value="{{ old('longitude') }}">
+                                <small class="text-muted">Click on the map to set the exact location.</small>
+                            </div>
+
                             <!-- Rent -->
                             <div class="mb-4">
                                 <div class="form-floating">
@@ -168,6 +179,53 @@
                 reader.readAsDataURL(file);
             } else {
                 imagePreview.style.display = 'none';
+            }
+        });
+
+        // Initialize Map
+        document.addEventListener('DOMContentLoaded', function () {
+            // Default to Amman, Jordan if not set
+            var defaultLat = {{ old('latitude') ?? 31.9539 }};
+            var defaultLng = {{ old('longitude') ?? 35.9106 }};
+
+            var map = L.map('map').setView([defaultLat, defaultLng], 13);
+
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }).addTo(map);
+
+            var marker;
+
+            // If old values exist, add marker
+            if ("{{ old('latitude') }}" && "{{ old('longitude') }}") {
+                marker = L.marker([defaultLat, defaultLng], {draggable: true}).addTo(map);
+            }
+
+            map.on('click', function(e) {
+                var lat = e.latlng.lat;
+                var lng = e.latlng.lng;
+
+                if (marker) {
+                    marker.setLatLng(e.latlng);
+                } else {
+                    marker = L.marker(e.latlng, {draggable: true}).addTo(map);
+                }
+
+                document.getElementById('latitude').value = lat;
+                document.getElementById('longitude').value = lng;
+                
+                // Also reverse geocode could be nice here but simpler to just set coordinates
+            });
+
+             // Update inputs when marker is dragged
+            if(marker) {
+                 marker.on('dragend', function(e) {
+                    var lat = e.target.getLatLng().lat;
+                    var lng = e.target.getLatLng().lng;
+                    document.getElementById('latitude').value = lat;
+                    document.getElementById('longitude').value = lng;
+                });
             }
         });
     </script>

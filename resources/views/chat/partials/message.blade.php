@@ -2,82 +2,107 @@
     $isMe = $message->sender_id === auth()->id();
 @endphp
 
-<div class="d-flex {{ $isMe ? 'justify-content-end' : 'justify-content-start' }} mb-3 animate-fadeIn">
-    <div class="position-relative" style="max-width: 75%;">
+<div class="d-flex {{ $isMe ? 'justify-content-end' : 'justify-content-start' }} mb-2 animate-fadeIn"
+     data-message-id="{{ $message->id }}">
+
+    <div class="d-flex flex-column {{ $isMe ? 'align-items-end' : 'align-items-start' }}"
+         style="max-width: 60%;">
+
         {{-- Message Bubble --}}
-        <div class="px-4 py-3 rounded-4 shadow-sm transition-all
-            {{ $isMe 
-                ? 'bg-primary text-white rounded-end-0' 
-                : 'bg-light text-dark rounded-start-0' 
+        <div class="message-bubble px-2 py-1 rounded-4 shadow-sm transition-all
+            {{ $isMe
+                ? 'bg-primary text-white rounded-end-0'
+                : 'bg-light text-dark rounded-start-0'
             }}">
-            <div class="lh-base" style="word-wrap: break-word; white-space: pre-wrap;">
+
+            <div class="message-text">
                 {!! nl2br(e($message->content)) !!}
             </div>
         </div>
 
         {{-- Timestamp & Status --}}
-        <div class="d-flex align-items-center mt-1 gap-2 small text-muted message-meta {{ $isMe ? 'justify-content-end' : 'justify-content-start' }}">
+        <div class="d-flex align-items-center mt-1 gap-2 small text-muted message-meta
+            {{ $isMe ? 'justify-content-end' : 'justify-content-start' }}">
+
+            <span class="fw-medium">
+                {{ $message->created_at->format('H:i') }}
+            </span>
+
             @if($isMe)
-                <span class="fw-medium">
-                    {{ $message->created_at->format('H:i') }}
-                </span>
                 <div class="d-flex align-items-center gap-1">
                     @if($message->is_read)
                         <i class="bi bi-check2-all text-primary"></i>
-                        <span class="text-muted" style="font-size: 0.75rem;">{{ $message->created_at->diffForHumans() }}</span>
                     @else
                         <i class="bi bi-check2 text-muted"></i>
-                        <span class="text-muted" style="font-size: 0.75rem;">{{ $message->created_at->diffForHumans() }}</span>
                     @endif
+                    <span class="time-ago">
+                        {{ $message->created_at->diffForHumans() }}
+                    </span>
                 </div>
             @else
-                <span class="fw-medium">
-                    {{ $message->created_at->format('H:i') }}
-                </span>
-                <span style="font-size: 0.75rem;">
+                <span class="time-ago">
                     {{ $message->created_at->diffForHumans() }}
                 </span>
             @endif
+
         </div>
     </div>
 </div>
 
 <style>
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(10px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
+.message-bubble {
+    max-width: 100%;
+    text-align: left;
+}
 
-    .animate-fadeIn {
-        animation: fadeIn 0.3s ease-out;
-    }
+.message-text {
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    font-size: 0.85rem;
+    line-height: 1.3;
+    text-align: left;
+}
 
-    .message-meta {
-        opacity: 0.7;
-        transition: opacity 0.2s ease;
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
     }
-
-    .animate-fadeIn:hover .message-meta {
+    to {
         opacity: 1;
+        transform: translateY(0);
     }
+}
 
-    .transition-all {
-        transition: all 0.2s ease;
-    }
+.animate-fadeIn {
+    animation: fadeIn 0.25s ease-out;
+}
 
-    .animate-fadeIn:hover .transition-all {
-        transform: scale(1.02);
-    }
+.message-meta {
+    opacity: 0.65;
+    transition: opacity 0.2s ease;
+}
 
-    @media (max-width: 640px) {
-        .d-flex > .position-relative {
-            max-width: 85% !important;
-        }
+.animate-fadeIn:hover .message-meta {
+    opacity: 1;
+}
+
+.transition-all {
+    transition: all 0.2s ease;
+}
+
+.animate-fadeIn:hover .transition-all {
+    transform: scale(1.01);
+}
+
+.time-ago {
+    font-size: 0.7rem;
+}
+
+@media (max-width: 640px) {
+    .animate-fadeIn > div {
+        max-width: 75% !important;
     }
+}
 </style>
