@@ -143,11 +143,11 @@ class LandlordController extends Controller
     }
     public function verificationForm()
     {
-        $pendingRequest = \App\Models\VerificationRequest::where('user_id', Auth::id())
-            ->where('status', 'pending')
+        $verificationRequest = \App\Models\VerificationRequest::where('user_id', Auth::id())
+            ->latest()
             ->first();
 
-        return view('landlord.verify', compact('pendingRequest'));
+        return view('landlord.verify', compact('verificationRequest'));
     }
 
     public function submitVerification(Request $request)

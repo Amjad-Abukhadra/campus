@@ -47,7 +47,7 @@ class AuthController extends Controller
             } elseif ($user->hasRole('student')) {
                 return redirect('/student/apartments');
             } else {
-                Auth::logout(); // no valid role
+                Auth::logout(); 
                 return redirect('/login')->withErrors([
                     'email' => 'Your account does not have a role assigned.',
                 ]);

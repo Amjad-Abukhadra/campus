@@ -31,6 +31,8 @@ class VerificationRequestResource extends Resource
                     ->maxLength(255),
                 Forms\Components\FileUpload::make('document_path')
                     ->image()
+                    ->disk('public')
+                    ->directory('verification_documents')
                     ->required(),
                 Forms\Components\TextInput::make('status')
                     ->required()
